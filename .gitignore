@@ -1,0 +1,17 @@
+## .NET Core
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+.vscode/
+
+## Temporary / extraction artifacts
+docs/brochure_rendered/
+docs/extracted_profile_images/
+docs/extracted_brochure_images/
+docs/*.png
+docs/*.txt
+docs/run_ocr.ps1

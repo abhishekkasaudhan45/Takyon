@@ -1,0 +1,162 @@
+@page
+@model Takyon.Pages.Contact.IndexModel
+@{
+    ViewData["Title"] = "Contact Us — Corporate Offices & Project Inquiries";
+}
+
+<partial name="_HeroSection" model='("Contact Us", "Connect with Takyon Networks Limited across our corporate offices in Lucknow, Delhi NCR, and Kolkata.", "Contact")' />
+
+<section class="section-padding section-bg-white">
+  <div class="container">
+    <div class="row g-5">
+      <!-- Col 1: Contact Form -->
+      <div class="col-lg-7">
+        <div class="takyon-card p-4 p-md-5">
+          <div class="demo-banner mb-4">
+            <div class="d-flex align-items-start gap-2">
+              <i class="bi bi-exclamation-triangle-fill fs-5 flex-shrink-0 text-warning"></i>
+              <div>
+                <strong>Prototype Demonstration Mode:</strong>
+                Client-side form validation is active. In accordance with Phase 1/2 project scope, form submissions are evaluated entirely on the frontend; no backend database persistence, email transmission, or server storage is executed.
+              </div>
+            </div>
+          </div>
+
+          <h3 class="h4 fw-bold text-navy mb-3">Send a Project Inquiry</h3>
+          <p class="text-muted small mb-4">
+            Fill in the details below to test frontend validation. Required fields are marked with an asterisk (*).
+          </p>
+
+          <form id="takyonContactForm" novalidate>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="fullName" class="form-label">Full Name *</label>
+                <input type="text" class="form-control" id="fullName" name="FullName" placeholder="e.g. Rajesh Kumar" required aria-describedby="fullNameError" />
+                <div class="invalid-feedback" id="fullNameError">Please enter your full name (at least 2 characters).</div>
+              </div>
+
+              <div class="col-md-6">
+                <label for="email" class="form-label">Corporate Email Address *</label>
+                <input type="email" class="form-control" id="email" name="Email" placeholder="e.g. rkumar@organization.gov.in" required aria-describedby="emailError" />
+                <div class="invalid-feedback" id="emailError">Please enter a valid corporate email address.</div>
+              </div>
+
+              <div class="col-md-6">
+                <label for="organization" class="form-label">Organization / Department</label>
+                <input type="text" class="form-control" id="organization" name="Organization" placeholder="e.g. Dept of Public Works / Enterprise Ltd" />
+              </div>
+
+              <div class="col-md-6">
+                <label for="serviceInterest" class="form-label">Solution Area</label>
+                <select class="form-select" id="serviceInterest" name="ServiceInterest">
+                  <option value="">-- Select Solution Area --</option>
+                  @foreach (var sol in Model.Solutions)
+                  {
+                      <option value="@sol.Title">@sol.Title</option>
+                  }
+                </select>
+              </div>
+
+              <div class="col-12">
+                <label for="message" class="form-label">Project Inquiry / Requirements *</label>
+                <textarea class="form-control" id="message" name="Message" rows="4" placeholder="Describe your IT infrastructure requirements, RFP scope, or campus project..." required aria-describedby="messageError"></textarea>
+                <div class="invalid-feedback" id="messageError">Please provide your message (at least 10 characters).</div>
+              </div>
+
+              <div class="col-12 mt-4">
+                <button type="submit" class="btn btn-takyon-primary px-4 py-3 fw-bold w-100 w-sm-auto">
+                  <i class="bi bi-send-fill me-2"></i> Submit Inquiry (Frontend Validation Demo)
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <!-- Honest Demo Success Message (Hidden by default, shown via forms.js on valid submission) -->
+          <div id="contactSuccessNotice" class="demo-success-alert d-none mt-4" role="status" aria-live="polite">
+            <div class="d-flex align-items-start gap-3">
+              <i class="bi bi-check-circle-fill fs-3 text-success flex-shrink-0"></i>
+              <div>
+                <h5 class="fw-bold mb-1 text-success">Frontend Validation Succeeded!</h5>
+                <p class="mb-0 small">
+                  Your form inputs have successfully passed client-side validation checks. 
+                  <strong>Notice:</strong> This is an initial frontend release. In accordance with architectural boundaries, this demonstration does not transmit or store your message on a backend server or database.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Col 2: Corporate Offices Directory -->
+      <div class="col-lg-5">
+        <h3 class="h4 fw-bold text-navy mb-4">Corporate Office Directory</h3>
+
+        @foreach (var office in Model.Offices)
+        {
+            <div class="card p-4 rounded-3 border mb-3 shadow-sm @(office.IsAddressVerified ? "bg-white" : "bg-light border-warning")">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="badge @(office.IsAddressVerified ? "bg-primary-subtle text-primary" : "bg-warning-subtle text-warning-emphasis") border small">
+                  @office.OfficeType
+                </span>
+                <span class="fw-bold text-navy">@office.City</span>
+              </div>
+
+              @if (office.IsAddressVerified)
+              {
+                  <p class="small text-muted mb-2">
+                    <i class="bi bi-geo-alt-fill text-primary me-1"></i> @office.Address
+                  </p>
+              }
+              else
+              {
+                  <div class="alert alert-warning py-2 px-3 small mb-2 border">
+                    <i class="bi bi-shield-exclamation me-1"></i>
+                    <strong>Physical Address Withheld:</strong> @office.UnresolvedNote
+                  </div>
+              }
+
+              <div class="small text-muted">
+                <div><i class="bi bi-telephone-fill text-primary me-2"></i><strong>Phone:</strong> @office.Phone</div>
+                <div><i class="bi bi-envelope-fill text-primary me-2"></i><strong>Email:</strong> <a href="mailto:@office.Email">@office.Email</a></div>
+              </div>
+            </div>
+        }
+
+        <!-- QR Payload Clarification Panel -->
+        <div class="card p-4 rounded-3 border bg-light mt-4">
+          <div class="d-flex align-items-center gap-2 mb-2 text-navy fw-bold">
+            <i class="bi bi-qr-code fs-4 text-primary"></i>
+            <span>Contact QR Code Status</span>
+          </div>
+          <p class="small text-muted mb-0">
+            In compliance with project guidelines, dynamic QR code generation is withheld until the official payload specification (vCard vs verified company profile URL) is confirmed by stakeholders. Assumed or fabricated URLs have not been encoded.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Discrepancy & Editorial Transparency Section -->
+<section class="section-padding section-bg-light border-top">
+  <div class="container">
+    <div class="section-heading mb-4">
+      <span class="section-tag">Source-of-Truth Transparency</span>
+      <h3 class="h4 fw-bold text-navy">Documented Discrepancies & Editorial Status</h3>
+      <div class="accent-bar"></div>
+      <p class="small text-muted">
+        In strict adherence to architectural guidelines, all unresolved conflicts between the Company Profile and the A4 Brochure are recorded here for stakeholder verification rather than silently reconciled:
+      </p>
+    </div>
+
+    <div class="list-group">
+      @foreach (var item in Model.UnresolvedDiscrepancies)
+      {
+          <div class="list-group-item list-group-item-action d-flex align-items-start gap-3 py-3">
+            <i class="bi bi-info-circle-fill text-primary fs-5 flex-shrink-0 mt-1"></i>
+            <div class="small text-muted">@item</div>
+          </div>
+      }
+    </div>
+  </div>
+</section>

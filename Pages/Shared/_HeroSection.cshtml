@@ -1,0 +1,20 @@
+@model (string Title, string Subtitle, string? CurrentPageName)
+
+<section class="takyon-hero">
+  <div class="container">
+    @if (!string.IsNullOrEmpty(Model.CurrentPageName))
+    {
+        <nav aria-label="breadcrumb" class="takyon-breadcrumb">
+          <a asp-page="/Index"><i class="bi bi-house-door-fill me-1"></i>Home</a>
+          <span class="mx-2 opacity-50">/</span>
+          <span aria-current="page">@Model.CurrentPageName</span>
+        </nav>
+    }
+    <div class="row align-items-center">
+      <div class="col-lg-9">
+        <h1 class="display-5">@Model.Title</h1>
+        <p class="lead">@Model.Subtitle</p>
+      </div>
+    </div>
+  </div>
+</section>

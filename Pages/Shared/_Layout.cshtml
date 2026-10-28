@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Takyon Networks Limited — BSE-listed IT system integrator and infrastructure solutions provider. Delivering Enterprise Networking, Cyber Security, Data Centers, Cloud, and Surveillance across India." />
+    <title>@ViewData["Title"] - Takyon Networks Limited</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <!-- Takyon Custom Styles -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <partial name="_SiteHeader" />
+
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <partial name="_SiteFooter" />
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Site Scripts -->
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/forms.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

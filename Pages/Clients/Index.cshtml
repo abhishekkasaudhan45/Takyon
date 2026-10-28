@@ -1,0 +1,80 @@
+@page
+@model Takyon.Pages.Clients.IndexModel
+@{
+    ViewData["Title"] = "Client Portfolio — Public Institutions, Defence, Railways & Enterprises";
+}
+
+<partial name="_HeroSection" model='("Client Portfolio", "A portfolio of client engagements across public institutions, defense establishments, railways, BFSI, and enterprise organizations.", "Clients")' />
+
+<section class="section-padding section-bg-white">
+  <div class="container">
+    <div class="section-heading text-center">
+      <span class="section-tag">Trusted Partnerships</span>
+      <h2 class="section-title">Clients Featured in Our Portfolio</h2>
+      <div class="accent-bar centered"></div>
+      <p class="section-desc mx-auto">
+        Showcasing organizations represented in our technology projects across India. Displayed in accordance with source records from the corporate profile.
+      </p>
+    </div>
+
+    <!-- Client Logo Grid -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+      @foreach (var client in Model.Clients)
+      {
+          <div class="col">
+            <div class="takyon-card p-3 text-center h-100">
+              <div class="d-flex align-items-center justify-content-center p-3 rounded bg-white" style="height: 110px;">
+                <img src="@client.LogoPath" alt="@client.AltText" class="img-fluid" style="max-height: 80px; max-width: 100%; object-fit: contain;" />
+              </div>
+              <div class="border-top pt-2 mt-2">
+                <span class="badge bg-light text-secondary border small mb-1">@client.Sector</span>
+                <h5 class="h6 fw-bold text-navy mb-1 text-truncate" title="@client.Name">@client.Name</h5>
+                <p class="small text-muted mb-0">@client.Description</p>
+              </div>
+            </div>
+          </div>
+      }
+    </div>
+
+    <div class="mt-5 p-3 rounded-3 bg-light border text-center small text-muted">
+      <i class="bi bi-info-circle me-1 text-primary"></i> 
+      <strong>Portfolio Disclosure:</strong> Client logos reflect historical and ongoing project engagements, supply contracts, SITC implementations, and maintenance partnerships as documented in the Takyon corporate profile.
+    </div>
+  </div>
+</section>
+
+<!-- Sector Breakdown Bar -->
+<section class="section-padding section-bg-light border-top">
+  <div class="container">
+    <div class="row g-4 text-center">
+      <div class="col-6 col-md-3">
+        <div class="p-3 bg-white rounded border">
+          <i class="bi bi-shield-shaded text-primary fs-2"></i>
+          <h5 class="fw-bold text-navy mt-2 mb-1">Defence</h5>
+          <p class="small text-muted mb-0">Indian Army, HAL, Ordnance</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="p-3 bg-white rounded border">
+          <i class="bi bi-train-front text-primary fs-2"></i>
+          <h5 class="fw-bold text-navy mt-2 mb-1">Railways</h5>
+          <p class="small text-muted mb-0">RDSO, NCR Jhansi & Agra</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="p-3 bg-white rounded border">
+          <i class="bi bi-bank text-primary fs-2"></i>
+          <h5 class="fw-bold text-navy mt-2 mb-1">Government</h5>
+          <p class="small text-muted mb-0">UPSWAN, Bihar SWAN, RTO</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="p-3 bg-white rounded border">
+          <i class="bi bi-hospital text-primary fs-2"></i>
+          <h5 class="fw-bold text-navy mt-2 mb-1">Healthcare</h5>
+          <p class="small text-muted mb-0">AIIMS, NHM, District Hospitals</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

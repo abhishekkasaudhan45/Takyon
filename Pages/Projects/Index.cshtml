@@ -1,0 +1,70 @@
+@page
+@model Takyon.Pages.Projects.IndexModel
+@{
+    ViewData["Title"] = "Notable Projects — Verified Execution & Case Studies";
+}
+
+<partial name="_HeroSection" model='("Notable Projects & Case Studies", "Demonstrated execution across mission-critical government, railway, defence, healthcare, and utility infrastructure.", "Projects")' />
+
+<section class="section-padding section-bg-white">
+  <div class="container">
+    <div class="section-heading text-center">
+      <span class="section-tag">Case Studies</span>
+      <h2 class="section-title">Verified Infrastructure Deployments</h2>
+      <div class="accent-bar centered"></div>
+      <p class="section-desc mx-auto">
+        All project scopes, client organizations, and deployment metrics are source-verified directly from the Takyon corporate brochure.
+      </p>
+    </div>
+
+    <div class="row g-4">
+      @foreach (var proj in Model.Projects)
+      {
+          <div class="col-md-6 col-lg-4" id="@proj.Id">
+            <div class="takyon-card">
+              <img src="@proj.ImagePath" alt="@proj.Title project photograph" class="project-card-image" />
+              <div class="project-card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="project-number">PROJECT @proj.ProjectNumber</span>
+                  <span class="badge bg-primary-subtle text-primary border small">@proj.Industry</span>
+                </div>
+                <h4 class="h5 fw-bold text-navy mb-2">@proj.Title</h4>
+                <div class="project-client-badge mb-2">
+                  <i class="bi bi-person-badge me-1"></i> <strong>Client:</strong> @proj.Client
+                </div>
+                <div class="small text-muted mb-2">
+                  <i class="bi bi-geo-alt me-1 text-primary"></i> <strong>Location:</strong> @proj.Location
+                </div>
+                <div class="p-3 bg-light rounded border mt-2">
+                  <strong class="d-block small text-navy mb-1"><i class="bi bi-bullseye text-primary me-1"></i> Project Scope:</strong>
+                  <p class="project-scope mb-0 small text-muted">
+                    @proj.Scope
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Empanelment & Delivery Notice -->
+<section class="section-padding section-bg-light border-top">
+  <div class="container text-center">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="rounded-circle bg-white text-primary p-3 border shadow-sm mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+          <i class="bi bi-patch-check-fill fs-2"></i>
+        </div>
+        <h3 class="fw-bold text-navy mb-2">Over 1,000 Projects Delivered Across India</h3>
+        <p class="text-muted mb-4">
+          From 23-building campus medical networks and state-wide SWAN operation to high-security defence VSAT links, Takyon delivers with a zero-failure track record.
+        </p>
+        <a asp-page="/Contact/Index" class="btn btn-takyon-primary px-4 py-2">
+          Discuss Your Project Requirements <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

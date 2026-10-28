@@ -1,0 +1,62 @@
+@page
+@model Takyon.Pages.Leadership.IndexModel
+@{
+    ViewData["Title"] = "Our Leadership Team — Board of Directors & Executive Management";
+}
+
+<partial name="_HeroSection" model='("Our Leadership Team", "The people behind our progress — driving innovation, corporate governance, and lasting client relationships.", "Leadership")' />
+
+<section class="section-padding section-bg-white">
+  <div class="container">
+    <div class="section-heading text-center">
+      <span class="section-tag">Executive Governance</span>
+      <h2 class="section-title">Board of Directors & Senior Management</h2>
+      <div class="accent-bar centered"></div>
+      <p class="section-desc mx-auto">
+        A passionate team of leaders driving technical excellence, market growth, and sustainable value creation across India.
+      </p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+      @foreach (var leader in Model.LeadershipTeam)
+      {
+          <div class="col-md-6 col-lg-4">
+            <div class="takyon-card">
+              <div class="leadership-image-wrapper">
+                <img src="@leader.ImagePath" alt="@leader.Name - @leader.Title" class="leadership-image" />
+              </div>
+              <div class="leadership-card-body">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="badge bg-light text-secondary border small">@leader.RoleCategory</span>
+                </div>
+                <h3 class="h4 fw-bold text-navy mb-1">@leader.Name</h3>
+                <div class="leadership-title">@leader.Title</div>
+                <p class="leadership-bio">
+                  @leader.Bio
+                </p>
+              </div>
+            </div>
+          </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Governance & Compliance Notice -->
+<section class="section-padding section-bg-light border-top">
+  <div class="container">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-8">
+        <h3 class="fw-bold text-navy mb-2">Corporate Governance & Compliance</h3>
+        <p class="text-muted mb-0">
+          As a BSE-listed company operating under SEBI's Listing Obligations and Disclosure Requirements (LODR), Takyon Networks Limited adheres to rigorous standards of corporate governance, financial transparency, and board-level oversight.
+        </p>
+      </div>
+      <div class="col-lg-4 text-lg-end">
+        <a asp-page="/Contact/Index" class="btn btn-takyon-primary">
+          Connect with Executive Office <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,68 @@
+@inject ITakyonContentProvider ContentProvider
+@{
+    var overview = ContentProvider.GetCompanyOverview();
+    var currentPath = ViewContext.HttpContext.Request.Path.Value ?? "/";
+}
+
+<!-- Top Utility Bar -->
+<div class="takyon-topbar d-none d-lg-block">
+  <div class="container d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center gap-3">
+      <span class="takyon-badge-pill"><i class="bi bi-patch-check-fill"></i> @overview.BseStatus</span>
+      <span class="takyon-badge-pill"><i class="bi bi-award-fill"></i> @overview.CmmiStatus</span>
+      <span class="takyon-badge-pill"><i class="bi bi-shield-check"></i> @overview.GemStatus</span>
+    </div>
+    <div class="d-flex align-items-center gap-4">
+      <span><i class="bi bi-telephone-fill me-1 text-info"></i> <a href="tel:05226656617">(0522) 665 6617</a></span>
+      <span><i class="bi bi-envelope-fill me-1 text-info"></i> <a href="mailto:info@takyon.co.in">info@takyon.co.in</a></span>
+      <span><i class="bi bi-geo-alt-fill me-1 text-info"></i> Lucknow (HQ)</span>
+    </div>
+  </div>
+</div>
+
+<!-- Primary Navbar -->
+<nav class="navbar navbar-expand-lg takyon-navbar" aria-label="Main Navigation">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center" asp-page="/Index" aria-label="Takyon Networks Limited Home">
+      <img src="~/images/brand/takyon-logo.png" alt="Takyon Networks Limited - Passion for Integration" class="takyon-brand-logo" />
+    </a>
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#takyonNavContent" aria-controls="takyonNavContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="takyonNavContent">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
+        <li class="nav-item">
+          <a class="nav-link @(currentPath == "/" || currentPath.Equals("/Index", StringComparison.OrdinalIgnoreCase) ? "active" : "")" asp-page="/Index">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link @(currentPath.StartsWith("/About", StringComparison.OrdinalIgnoreCase) ? "active" : "")" asp-page="/About/Index">About Us</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link @(currentPath.StartsWith("/Leadership", StringComparison.OrdinalIgnoreCase) ? "active" : "")" asp-page="/Leadership/Index">Leadership</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link @(currentPath.StartsWith("/Services", StringComparison.OrdinalIgnoreCase) ? "active" : "")" asp-page="/Services/Index">Services</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link @(currentPath.StartsWith("/Industries", StringComparison.OrdinalIgnoreCase) ? "active" : "")" asp-page="/Industries/Index">Industries</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link @(currentPath.StartsWith("/Projects", StringComparison.OrdinalIgnoreCase) ? "active" : "")" asp-page="/Projects/Index">Projects</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link @(currentPath.StartsWith("/Clients", StringComparison.OrdinalIgnoreCase) ? "active" : "")" asp-page="/Clients/Index">Clients</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link @(currentPath.StartsWith("/Partners", StringComparison.OrdinalIgnoreCase) ? "active" : "")" asp-page="/Partners/Index">Partners</a>
+        </li>
+        <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+          <a class="btn btn-takyon-primary btn-sm px-3 py-2" asp-page="/Contact/Index">
+            <i class="bi bi-chat-dots-fill me-1"></i> Contact
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

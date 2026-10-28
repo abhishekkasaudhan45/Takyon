@@ -1,0 +1,151 @@
+@page
+@model Takyon.Pages.Services.IndexModel
+@{
+    ViewData["Title"] = "IT Solutions & Services — Core & Specialized Enterprise Offerings";
+}
+
+<partial name="_HeroSection" model='("IT Solutions & Services", "Comprehensive. Integrated. Future-Ready. Turnkey technology architectures engineered for institutional resilience.", "Services")' />
+
+<!-- Introductory Note -->
+<section class="py-4 bg-light border-bottom">
+  <div class="container">
+    <div class="p-3 bg-white rounded-3 border d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+      <div>
+        <span class="badge bg-primary me-2">Primary Taxonomy</span>
+        <span class="text-navy fw-semibold">Preserving the 6 Core IT Solutions from the A4 Brochure as our primary service pillars.</span>
+      </div>
+      <div class="d-flex gap-2">
+        <a href="#core-solutions" class="btn btn-outline-primary btn-sm">6 Core Pillars</a>
+        <a href="#specialized-services" class="btn btn-outline-secondary btn-sm">Specialized Categories</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section 1: The 6 Core IT Solutions (Brochure) -->
+<section id="core-solutions" class="section-padding section-bg-white">
+  <div class="container">
+    <div class="section-heading text-center">
+      <span class="section-tag">Primary Service Categories</span>
+      <h2 class="section-title">The 6 Core IT Solutions</h2>
+      <div class="accent-bar centered"></div>
+      <p class="section-desc mx-auto">
+        Defined in Takyon's corporate service portfolio, delivering integrated, future-ready infrastructure for institutional resilience.
+      </p>
+    </div>
+
+    <div class="row g-4">
+      @foreach (var sol in Model.CoreSolutions)
+      {
+          <div class="col-lg-6" id="@sol.Id">
+            <div class="takyon-card p-4">
+              <div class="d-flex align-items-start gap-3 mb-3">
+                <div class="solution-icon-wrapper mb-0 flex-shrink-0">
+                  <i class="bi @sol.Icon"></i>
+                </div>
+                <div>
+                  <span class="solution-badge">Primary Core Solution</span>
+                  <h3 class="solution-title mb-1 text-navy">@sol.Title</h3>
+                </div>
+              </div>
+
+              <p class="text-muted mb-3">@sol.Summary</p>
+
+              <div class="row g-3 pt-3 border-top mt-1">
+                <!-- Sub services -->
+                <div class="col-sm-6">
+                  <h6 class="fw-bold small text-navy text-uppercase mb-2">Scope of Services:</h6>
+                  <ul class="solution-list">
+                    @foreach (var sub in sol.SubServices)
+                    {
+                        <li>@sub</li>
+                    }
+                  </ul>
+                </div>
+
+                <!-- Key Highlights -->
+                <div class="col-sm-6">
+                  <h6 class="fw-bold small text-navy text-uppercase mb-2">Technical Highlights:</h6>
+                  <ul class="list-unstyled small mb-0">
+                    @foreach (var hl in sol.KeyHighlights)
+                    {
+                        <li class="mb-1 text-muted d-flex align-items-center gap-2">
+                          <i class="bi bi-check2 text-success"></i> @hl
+                        </li>
+                    }
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Why It Matters -->
+              <div class="bg-light p-3 rounded-3 mt-3 border">
+                <h6 class="small fw-bold text-navy mb-1"><i class="bi bi-graph-up-arrow text-primary me-1"></i> Why It Matters:</h6>
+                <div class="row row-cols-1 row-cols-sm-2 g-1">
+                  @foreach (var benefit in sol.WhyItMatters)
+                  {
+                      <div class="col small text-muted">&bull; @benefit</div>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Section 2: Specialized Service Categories (Company Profile) -->
+<section id="specialized-services" class="section-padding section-bg-light border-top">
+  <div class="container">
+    <div class="section-heading text-center">
+      <span class="section-tag">Extended Capabilities</span>
+      <h2 class="section-title">Specialized Service Categories</h2>
+      <div class="accent-bar centered"></div>
+      <p class="section-desc mx-auto">
+        Specialized domains detailed in the updated company profile, expanding our capabilities into dedicated WAN orchestration, drone aerial inspection, and enterprise software.
+      </p>
+    </div>
+
+    <div class="row g-4">
+      @foreach (var spec in Model.SpecializedSolutions)
+      {
+          <div class="col-lg-4 col-md-6" id="@spec.Id">
+            <div class="takyon-card p-4">
+              <div class="solution-icon-wrapper mb-3" style="background-color: var(--takyon-green-light); color: var(--takyon-green-dark);">
+                <i class="bi @spec.Icon"></i>
+              </div>
+              <span class="badge bg-secondary-subtle text-secondary border small mb-2 d-inline-block">Specialized Category</span>
+              <h3 class="solution-title text-navy">@spec.Title</h3>
+              <p class="small text-muted mb-3">@spec.Summary</p>
+
+              <h6 class="fw-bold small text-navy text-uppercase mb-2 border-top pt-2">Capabilities:</h6>
+              <ul class="solution-list mb-3">
+                @foreach (var sub in spec.SubServices)
+                {
+                    <li>@sub</li>
+                }
+              </ul>
+
+              <div class="bg-white p-3 rounded border mt-auto">
+                <h6 class="small fw-bold text-navy mb-1"><i class="bi bi-shield-check text-success me-1"></i> Impact:</h6>
+                <p class="small text-muted mb-0">@spec.WhyItMatters.FirstOrDefault()</p>
+              </div>
+            </div>
+          </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="container my-5">
+  <div class="cta-banner text-center p-5 rounded-4 shadow">
+    <h2 class="display-6 fw-bold mb-3 text-white">Need a Solution Architecture Consultation?</h2>
+    <p class="lead mb-4 text-light opacity-90 mx-auto" style="max-width: 680px;">
+      Our pre-sales and technical consulting teams collaborate with your IT leadership to design compliant, cost-effective infrastructure tailored to your RFP or campus specifications.
+    </p>
+    <a asp-page="/Contact/Index" class="btn btn-takyon-green px-4 py-3 fw-bold">
+      Request Consultation <i class="bi bi-arrow-right ms-1"></i>
+    </a>
+  </div>
+</section>

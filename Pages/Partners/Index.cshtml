@@ -1,0 +1,79 @@
+@page
+@model Takyon.Pages.Partners.IndexModel
+@{
+    ViewData["Title"] = "Strategic OEM Partnerships — Global Technology Alliances";
+}
+
+<partial name="_HeroSection" model='("Strategic OEM Partnerships", "Trusted global technology alliances delivering best-in-class hardware, enterprise software, and certified technical support.", "Partners")' />
+
+<section class="section-padding section-bg-white">
+  <div class="container">
+    <div class="section-heading text-center">
+      <span class="section-tag">Technology Ecosystem</span>
+      <h2 class="section-title">Global OEM Alliances</h2>
+      <div class="accent-bar centered"></div>
+      <p class="section-desc mx-auto">
+        We partner with 40+ leading global technology OEMs, ensuring our clients receive manufacturer-certified hardware, authentic licensing, and tier-1 SLA warranty support.
+      </p>
+    </div>
+
+    <!-- Partner Logos Grid -->
+    <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-4 g-4">
+      @foreach (var partner in Model.Partners)
+      {
+          <div class="col">
+            <div class="logo-card p-3 h-100 flex-column justify-content-center">
+              <img src="@partner.LogoPath" alt="@partner.AltText" class="logo-img mb-2" style="max-height: 48px;" />
+              <div class="small fw-semibold text-navy text-truncate w-100">@partner.Name</div>
+              <div class="small text-muted" style="font-size: 0.75rem;">@partner.Category</div>
+            </div>
+          </div>
+      }
+    </div>
+
+    <!-- Additional Partner Network Mention (Profile p.28) -->
+    <div class="mt-5 p-4 rounded-4 bg-light border">
+      <h4 class="h5 fw-bold text-navy mb-2"><i class="bi bi-diagram-3-fill text-primary me-2"></i>Extended Technology Ecosystem</h4>
+      <p class="small text-muted mb-3">
+        In addition to the primary alliances featured above, Takyon maintains integration partnerships and certified channel relationships with:
+      </p>
+      <div class="d-flex flex-wrap gap-2">
+        @foreach (var additional in new[] { "Cisco", "Adobe", "CP Plus", "CrowdStrike", "CtrlS", "Delta Power", "D-Link", "Emerson", "Hikvision", "Idemia", "LG Commercial", "Logitech", "Netrack", "Newgen", "Prama India", "R&M", "Rittal", "Samsung", "Sony", "Syrotech" })
+        {
+            <span class="badge bg-white text-navy border px-3 py-2 small fw-semibold">
+              <i class="bi bi-check2-circle text-success me-1"></i> @additional
+            </span>
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Value of OEM Partnerships -->
+<section class="section-padding section-bg-light border-top">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="p-4 bg-white rounded-3 border h-100">
+          <i class="bi bi-patch-check-fill text-primary fs-2 mb-3 d-inline-block"></i>
+          <h5 class="fw-bold text-navy mb-2">Direct OEM Warranties</h5>
+          <p class="small text-muted mb-0">Genuine OEM equipment backed by official manufacturer warranties, firmware updates, and replacement guarantees.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="p-4 bg-white rounded-3 border h-100">
+          <i class="bi bi-mortarboard-fill text-primary fs-2 mb-3 d-inline-block"></i>
+          <h5 class="fw-bold text-navy mb-2">Certified Engineers</h5>
+          <p class="small text-muted mb-0">Our 150+ member technical team holds official OEM certifications across networking, security, virtualization, and storage.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="p-4 bg-white rounded-3 border h-100">
+          <i class="bi bi-cash-stack text-primary fs-2 mb-3 d-inline-block"></i>
+          <h5 class="fw-bold text-navy mb-2">Competitive Pricing</h5>
+          <p class="small text-muted mb-0">Tier-1 partner status enables direct volume discounts and optimized bill-of-materials (BOM) for public tenders and enterprise procurement.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
