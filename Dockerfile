@@ -1,5 +1,5 @@
 # 1. Build Stage
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
 # Project file copy karke restore karein
@@ -11,13 +11,12 @@ COPY . .
 RUN dotnet publish -c Release -o /app/publish
 
 # 2. Runtime Stage
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 
-# Render ke default port ko expose karein
+# Render port binding
 ENV ASPNETCORE_HTTP_PORTS=8080
 EXPOSE 8080
 
-# Note: "Takyon.dll" ko apne project ke actual dll name se replace karein
 ENTRYPOINT ["dotnet", "Takyon.dll"]
