@@ -20,27 +20,33 @@ Do not copy the PDF page layouts literally. Adapt their visual identity to a res
 
 ## 2. Design References
 
-### Primary reference
-`company profile updated(1).pdf`
+The visual design system adheres to an explicit source hierarchy:
 
-Use this document for:
+### Primary reference
+`company profile updated(1).pdf` (29-page company profile)
+
+Use this document as the primary authority for:
 - Brand colors.
 - Typography hierarchy.
-- Company overview.
-- Leadership presentation.
-- Service cards.
+- Company overview and corporate narrative.
+- Leadership presentation, roles, and biographies.
+- Complete 8-category service catalog.
 - Industry presentation.
 - Client and OEM logo layouts.
+- Corporate contact information.
 
 ### Supporting reference
-`TAKYON BROCHURE A4 Size Colour Change(1).pdf`
+`TAKYON BROCHURE A4 Size Colour Change(1).pdf` (8-page A4 brochure)
 
-Use this document for:
-- Project imagery.
-- Project names and scopes.
-- Company credentials.
+Use this document as the supporting authority for:
+- 6 Core brochure solutions featured on the Home page.
+- Project case study imagery.
+- Project names, clients, and scopes.
+- Company credentials and BSE/CMMI indicators.
 - Government empanelment information.
-- Approved corporate contact details.
+- Supporting office contact details.
+
+Where documents disagree, discrepancies are explicitly documented and preserved rather than silently overwritten.
 
 ## 3. Proposed Color Palette
 
@@ -166,10 +172,13 @@ Contains:
 Contains:
 - Icon.
 - Solution title.
-- Short description.
-- Optional details link.
+- Short description / summary.
+- Sub-services / scope list.
+- Key technical highlights.
+- Impact / "Why It Matters" points.
+- `IsFeatured` boolean property: controls display on Home page (`true` for the 6 core brochure solutions).
 
-All solution cards must share consistent spacing and typography.
+All solution cards must share consistent spacing, typography, and card hierarchy aligned with the Takyon design system.
 
 ### 6.6 Industry Card
 
@@ -245,13 +254,27 @@ Recommended section order:
 1. Site header.
 2. Hero section.
 3. Company introduction.
-4. Approved credibility indicators.
-5. Core solutions.
+4. Approved credibility indicators (BSE listed, CMMI Level 3, GeM registered).
+5. Featured solutions (exactly 6 core brochure solutions).
 6. Industry verticals.
 7. Selected notable projects.
 8. OEM partner highlights.
 9. Contact call to action.
 10. Site footer.
+
+### Featured Solutions Guidance (Home Page)
+
+- Display exactly 6 featured solutions.
+- Use the `IsFeatured` property from the centralized content provider (`MockTakyonContentProvider`) to filter and select the solutions.
+- The 6 featured solutions correspond to the core solutions defined in the brochure:
+  1. Enterprise Networking
+  2. Cyber Security
+  3. Data Center Solutions
+  4. Cloud Solutions
+  5. Security & Surveillance
+  6. AV & Collaboration Services
+- Do not duplicate or manually redefine the service catalog in the Razor view; the view binds directly to the strongly typed ViewModel collection supplied by the PageModel.
+- Keep the featured solution cards consistent with the established design system (standard icon wrappers, structured typography, responsive column grid).
 
 ### Hero guidance
 
@@ -296,13 +319,26 @@ Recommended sections:
 
 1. Page hero.
 2. Services introduction.
-3. Solution card grid.
-4. Relevant supporting imagery.
+3. Solution card grid displaying the complete 8-category catalog:
+   - Primary Section: The 6 Core Solutions (`IsFeatured = true` from brochure).
+   - Specialized Section: The 2 Specialized Categories (`IsFeatured = false` from profile: SD-WAN & WAN Solutions, Drone-Enabled Solutions).
+4. Relevant supporting technical highlights and capabilities.
 5. Contact call to action.
 
-The final service taxonomy must be confirmed because the source profile shows more than six categories.
+### Services Page Display Rules
 
-Do not silently omit or combine categories.
+- Display all 8 profile service categories represented in the 29-page company profile:
+  1. Enterprise Networking (Profile p.11-12)
+  2. Cyber Security (Profile p.13)
+  3. Data Center Solutions (Profile p.15)
+  4. Cloud Solutions / Cloud & Managed Services (Profile p.18)
+  5. Security & Surveillance (Profile p.17)
+  6. AV & Collaboration Services / AV & Collaboration Solutions (Profile p.16)
+  7. SD-WAN & WAN Solutions (Profile p.14)
+  8. Drone-Enabled Solutions / Drone-Enabled Monitoring (Profile p.19)
+- Include the two non-featured categories (`SD-WAN & WAN Solutions` and `Drone-Enabled Solutions`) alongside the six core pillars.
+- Preserve source terminology and appropriate service descriptions without discarding profile content or inventing new categories.
+- Use the same centralized content model (`ITakyonContentProvider`) and design system as the Home page, ensuring full visual and architectural consistency.
 
 ## 7.5 Industries
 
@@ -483,25 +519,28 @@ All essential interactions must work without a mouse.
 
 ## 12. Asset Management
 
-Store approved assets under:
+Require local storage for all approved images and logos under:
 
 `wwwroot/images/`
 
-Use descriptive filenames, for example:
+Remote image hotlinking and third-party hosted URLs are strictly prohibited.
 
-- `takyon-logo.svg`
-- `project-aiims-bibinagar.jpg`
-- `project-hal-lucknow.jpg`
-- `partner-microsoft.svg`
+Organize the assets into these six required subdirectories:
 
-These names are examples only; use the actual approved assets that exist.
+- `brand/`: Brand logos, symbols, and company headquarters imagery (Takyon logo, symbol, building photo).
+- `leadership/`: Verified leadership portraits for executive directors and management.
+- `projects/`: Verified project case study site and deployment imagery.
+- `clients/`: Approved public sector, institutional, and enterprise client logos.
+- `partners/`: Approved global technology OEM and alliance partner logos.
+- `badges/`: Credibility credential badges (BSE Listed, CMMI Level 3).
 
-Requirements:
+### Asset Integrity and Verification Requirements
 
-- Do not invent missing assets.
-- Do not distort logos.
-- Avoid remote image hotlinks.
-- Optimize image sizes.
+- Razor views must reference local application assets using relative paths (e.g., `/images/brand/takyon-logo.png`).
+- Asset paths must match actual files in the repository and use consistent lowercase kebab-case naming conventions.
+- Missing assets must be reported rather than replaced with invented paths or placeholder mock URLs.
+- External image hotlinking is prohibited to guarantee security, performance, and offline reliability.
+- Asset verification must be based on actual repository contents: all 68 local asset files across the six subdirectories have been verified and cataloged in the repository.
 - Preserve source and usage information where available.
 
 ## 13. Final Design Acceptance Criteria

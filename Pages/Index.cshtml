@@ -2,375 +2,669 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Digital Transformation Partner — IT Infrastructure & Integration";
+
+    // Map the 6 core brochure solutions safely
+    var solNetworking = Model.CoreSolutions.FirstOrDefault(s => s.Id == "enterprise-networking") ?? Model.CoreSolutions.ElementAtOrDefault(0);
+    var solSecurity = Model.CoreSolutions.FirstOrDefault(s => s.Id == "cyber-security") ?? Model.CoreSolutions.ElementAtOrDefault(1);
+    var solDataCenter = Model.CoreSolutions.FirstOrDefault(s => s.Id == "data-center") ?? Model.CoreSolutions.ElementAtOrDefault(2);
+    var solSurveillance = Model.CoreSolutions.FirstOrDefault(s => s.Id == "security-surveillance") ?? Model.CoreSolutions.ElementAtOrDefault(4);
+    var solCloud = Model.CoreSolutions.FirstOrDefault(s => s.Id == "cloud-solutions") ?? Model.CoreSolutions.ElementAtOrDefault(3);
+    var solCollab = Model.CoreSolutions.FirstOrDefault(s => s.Id == "av-collaboration") ?? Model.CoreSolutions.ElementAtOrDefault(5);
 }
 
-<!-- Hero Section -->
-<section class="takyon-hero py-5">
-  <div class="container py-lg-4">
-    <div class="row align-items-center g-5">
-      <div class="col-lg-7">
-        <div class="d-inline-flex align-items-center gap-2 px-3 py-1 mb-3 rounded-pill" style="background-color: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);">
-          <span class="text-white fw-semibold small"><i class="bi bi-patch-check-fill text-warning me-1"></i> BSE Listed (Aug 2025)</span>
-          <span class="text-white opacity-50">|</span>
-          <span class="text-white fw-semibold small"><i class="bi bi-award-fill text-success me-1"></i> CMMI Level 3 Appraised</span>
-        </div>
-        <h1 class="display-4 fw-bold mb-3 text-white">
-          Enabling Digital Transformation.<br />
-          <span style="color: #a4e067;">Delivering Lasting Impact.</span>
-        </h1>
-        <p class="lead mb-4 text-light opacity-90">
-          Takyon Networks Limited is a trusted system integrator and IT infrastructure solutions provider, helping government, public sector, and enterprise organizations build secure, agile, and future-ready digital ecosystems.
-        </p>
-        <div class="d-flex flex-wrap gap-3">
-          <a asp-page="/Services/Index" class="btn btn-takyon-green px-4 py-3 fw-bold">
-            Explore Solutions <i class="bi bi-arrow-right ms-1"></i>
-          </a>
-          <a asp-page="/Projects/Index" class="btn btn-takyon-outline px-4 py-3 fw-bold text-white border-white">
-            Notable Projects
-          </a>
-        </div>
-      </div>
-      <div class="col-lg-5">
-        <div class="position-relative p-2 rounded-4 shadow-lg" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.2);">
-          <img src="~/images/brand/takyon-hq-building.jpg" alt="Takyon Networks Limited Corporate Headquarters" class="img-fluid rounded-3 w-100 shadow" style="max-height: 420px; object-fit: cover;" />
-          <div class="p-3 text-center text-white">
-            <span class="fw-bold">Corporate Headquarters</span> &bull; <span class="small opacity-75">Lucknow, Uttar Pradesh</span>
-          </div>
-        </div>
-      </div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/takyon-3d.css" asp-append-version="true" />
+}
+
+<div class="takyon-3d-page">
+  <!-- Fixed Full-Viewport WebGL Canvas (Decorative background, aria-hidden for accessibility) -->
+  <canvas id="takyon-3d-canvas" aria-hidden="true"></canvas>
+
+  <!-- Fixed Section Progress Navigator (Right side desktop dots) -->
+  <nav class="t3d-progress-nav" aria-label="3D Journey Section Navigation">
+    <div class="t3d-nav-item active">
+      <a href="#scene-hero" class="t3d-nav-dot" aria-label="Scene 1: Overview"></a>
+      <span class="t3d-nav-tooltip">01. Corporate Overview</span>
     </div>
+    <div class="t3d-nav-item">
+      <a href="#scene-networking" class="t3d-nav-dot" aria-label="Scene 2: Enterprise Networking"></a>
+      <span class="t3d-nav-tooltip">02. Enterprise Networking</span>
+    </div>
+    <div class="t3d-nav-item">
+      <a href="#scene-security" class="t3d-nav-dot" aria-label="Scene 3: Cyber Security"></a>
+      <span class="t3d-nav-tooltip">03. Cyber Security</span>
+    </div>
+    <div class="t3d-nav-item">
+      <a href="#scene-datacenter" class="t3d-nav-dot" aria-label="Scene 4: Data Center"></a>
+      <span class="t3d-nav-tooltip">04. Data Center Solutions</span>
+    </div>
+    <div class="t3d-nav-item">
+      <a href="#scene-surveillance" class="t3d-nav-dot" aria-label="Scene 5: Security & Surveillance"></a>
+      <span class="t3d-nav-tooltip">05. Security & Surveillance</span>
+    </div>
+    <div class="t3d-nav-item">
+      <a href="#scene-cloud" class="t3d-nav-dot" aria-label="Scene 6: Cloud & Managed Services"></a>
+      <span class="t3d-nav-tooltip">06. Cloud & Managed Services</span>
+    </div>
+    <div class="t3d-nav-item">
+      <a href="#scene-collaboration" class="t3d-nav-dot" aria-label="Scene 7: AV & Collaboration"></a>
+      <span class="t3d-nav-tooltip">07. AV & Collaboration</span>
+    </div>
+    <div class="t3d-nav-item">
+      <a href="#scene-trust" class="t3d-nav-dot" aria-label="Scene 8: Projects & Trust"></a>
+      <span class="t3d-nav-tooltip">08. Pan-India Footprint & Trust</span>
+    </div>
+    <div class="t3d-nav-item">
+      <a href="#scene-cta" class="t3d-nav-dot" aria-label="Scene 9: RFP & Consultation"></a>
+      <span class="t3d-nav-tooltip">09. Consultation & RFP Hub</span>
+    </div>
+  </nav>
+
+  <!-- Floating 3D View Toggle Control (Bottom-Left) -->
+  <div class="t3d-toggle-control">
+    <button id="takyon-3d-toggle" class="t3d-toggle-btn" type="button" aria-pressed="true" title="Toggle 3D WebGL background">
+      <span class="t3d-toggle-dot" aria-hidden="true"></span>
+      <span id="takyon-3d-toggle-text">3D View: ON</span>
+    </button>
   </div>
-</section>
 
-<!-- Credibility Metrics Bar -->
-<section class="section-padding section-bg-light border-bottom">
-  <div class="container">
-    <div class="row g-4 justify-content-center">
-      <div class="col-6 col-md-4 col-lg-2">
-        <div class="stat-box">
-          <div class="stat-number">15+</div>
-          <div class="stat-label">Years of Trust</div>
-        </div>
-      </div>
-      <div class="col-6 col-md-4 col-lg-2">
-        <div class="stat-box">
-          <div class="stat-number">1,000+</div>
-          <div class="stat-label">Projects Delivered</div>
-        </div>
-      </div>
-      <div class="col-6 col-md-4 col-lg-2">
-        <div class="stat-box">
-          <div class="stat-number">400+</div>
-          <div class="stat-label">Client Engagements</div>
-        </div>
-      </div>
-      <div class="col-6 col-md-4 col-lg-2">
-        <div class="stat-box">
-          <div class="stat-number">150+</div>
-          <div class="stat-label">IT Professionals</div>
-        </div>
-      </div>
-      <div class="col-6 col-md-4 col-lg-2">
-        <div class="stat-box">
-          <div class="stat-number">40+</div>
-          <div class="stat-label">OEM Alliances</div>
-        </div>
-      </div>
-      <div class="col-6 col-md-4 col-lg-2">
-        <div class="stat-box">
-          <div class="stat-number">12</div>
-          <div class="stat-label">Industry Verticals</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+  <!-- =========================================================================
+       SCENE 1: HERO OVERVIEW (0% - 10% Scroll)
+       ========================================================================= -->
+  <section id="scene-hero" class="t3d-scene-section hero-scene">
+    <div class="container">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-8">
+          <div class="d-inline-flex align-items-center gap-2 px-3 py-1 mb-3 rounded-pill" style="background: rgba(6, 17, 33, 0.7); border: 1px solid rgba(7, 139, 197, 0.4);">
+            <span class="text-white fw-semibold small"><i class="bi bi-patch-check-fill text-warning me-1"></i> @Model.Overview.BseStatus</span>
+            <span class="text-white opacity-50">|</span>
+            <span class="text-white fw-semibold small"><i class="bi bi-award-fill text-success me-1"></i> @Model.Overview.CmmiStatus</span>
+            <span class="text-white opacity-50 d-none d-md-inline">|</span>
+            <span class="text-white fw-semibold small d-none d-md-inline"><i class="bi bi-bank2 text-info me-1"></i> @Model.Overview.GemStatus</span>
+          </div>
 
-<!-- Company Overview / The Takyon Advantage -->
-<section class="section-padding section-bg-white">
-  <div class="container">
-    <div class="row align-items-center g-5">
-      <div class="col-lg-6">
-        <span class="section-tag">Inside Takyon</span>
-        <h2 class="section-title">Passion for Integration. Delivering End-to-End IT Infrastructure.</h2>
-        <div class="accent-bar"></div>
-        <p class="text-muted mb-4">
-          Headquartered in Lucknow and operating across India, Takyon Networks Limited translates complex operational priorities into dependable infrastructure. From structured campus connectivity and cyber security to state-wide optical networks and resilient data centers, we take complete turnkey accountability.
-        </p>
-        <div class="row g-3 mb-4">
-          <div class="col-sm-6">
-            <div class="d-flex align-items-start gap-3 p-3 rounded bg-light border">
-              <i class="bi bi-shield-check text-primary fs-3"></i>
-              <div>
-                <h6 class="fw-bold mb-1">CMMI Level 3 Appraised</h6>
-                <small class="text-muted">Rigorous delivery governance and process maturity.</small>
-              </div>
-            </div>
+          <h1 class="display-4 fw-bold mb-3 text-white">
+            Enabling Digital Transformation.<br />
+            <span style="color: var(--t3d-green);">Delivering Lasting Impact.</span>
+          </h1>
+
+          <p class="t3d-scene-lead">
+            Takyon Networks Limited is a trusted system integrator and IT infrastructure solutions provider, helping government, public sector, and enterprise organizations build secure, agile, and future-ready digital ecosystems nationwide.
+          </p>
+
+          <div class="d-flex flex-wrap gap-3 mb-4">
+            <a href="#scene-networking" class="btn btn-takyon-green px-4 py-3 fw-bold shadow">
+              Explore 6 Core Solutions <i class="bi bi-arrow-down ms-1"></i>
+            </a>
+            <a asp-page="/Contact/Index" class="btn btn-outline-light px-4 py-3 fw-bold">
+              Request Consultation
+            </a>
+            <a asp-page="/Projects/Index" class="btn btn-outline-info px-4 py-3 fw-bold">
+              Notable Projects <i class="bi bi-arrow-right ms-1"></i>
+            </a>
           </div>
-          <div class="col-sm-6">
-            <div class="d-flex align-items-start gap-3 p-3 rounded bg-light border">
-              <i class="bi bi-bank2 text-primary fs-3"></i>
-              <div>
-                <h6 class="fw-bold mb-1">BSE Listed Company</h6>
-                <small class="text-muted">Audited financials, transparency, and board-level governance.</small>
-              </div>
+
+          <!-- Quick Credibility Counters Strip -->
+          <div class="row g-2 pt-3 border-top border-secondary-subtle">
+            <div class="col-4 col-sm-2 text-center">
+              <div class="fw-bold fs-5 text-white">15+</div>
+              <small class="text-muted" style="font-size: 0.75rem;">Years Trust</small>
             </div>
-          </div>
-          <div class="col-sm-6">
-            <div class="d-flex align-items-start gap-3 p-3 rounded bg-light border">
-              <i class="bi bi-patch-check text-primary fs-3"></i>
-              <div>
-                <h6 class="fw-bold mb-1">Government Empanelments</h6>
-                <small class="text-muted">UPDESCO, UPPCL, GeM Portal, RailTel, UPRNN.</small>
-              </div>
+            <div class="col-4 col-sm-2 text-center">
+              <div class="fw-bold fs-5 text-white">1,000+</div>
+              <small class="text-muted" style="font-size: 0.75rem;">Projects</small>
             </div>
-          </div>
-          <div class="col-sm-6">
-            <div class="d-flex align-items-start gap-3 p-3 rounded bg-light border">
-              <i class="bi bi-headset text-primary fs-3"></i>
-              <div>
-                <h6 class="fw-bold mb-1">24/7 SLA Support</h6>
-                <small class="text-muted">On-ground support network and rapid SLA resolution.</small>
-              </div>
+            <div class="col-4 col-sm-2 text-center">
+              <div class="fw-bold fs-5 text-white">400+</div>
+              <small class="text-muted" style="font-size: 0.75rem;">Clients</small>
+            </div>
+            <div class="col-4 col-sm-2 text-center">
+              <div class="fw-bold fs-5 text-white">150+</div>
+              <small class="text-muted" style="font-size: 0.75rem;">Engineers</small>
+            </div>
+            <div class="col-4 col-sm-2 text-center">
+              <div class="fw-bold fs-5 text-white">40+</div>
+              <small class="text-muted" style="font-size: 0.75rem;">OEM Alliances</small>
+            </div>
+            <div class="col-4 col-sm-2 text-center">
+              <div class="fw-bold fs-5 text-white">12</div>
+              <small class="text-muted" style="font-size: 0.75rem;">Sectors</small>
             </div>
           </div>
         </div>
-        <a asp-page="/About/Index" class="btn btn-takyon-primary">
-          Read Company Story <i class="bi bi-arrow-right ms-1"></i>
-        </a>
-      </div>
-      <div class="col-lg-6">
-        <div class="card border-0 shadow-sm p-4 rounded-4" style="background: linear-gradient(135deg, #f8fbfd 0%, #eef5fa 100%); border: 1px solid #dce4ea;">
-          <h4 class="fw-bold mb-4 text-navy"><i class="bi bi-compass-fill text-primary me-2"></i>Takyon Core Pillars</h4>
-          <ul class="list-unstyled mb-0">
-            <li class="d-flex gap-3 mb-3 pb-3 border-bottom">
-              <span class="badge bg-primary rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">T</span>
-              <div>
-                <h6 class="fw-bold mb-1">Transforming Your Workplace</h6>
-                <p class="small text-muted mb-0">Enabling connected, productive workplaces through practical IT solutions.</p>
-              </div>
-            </li>
-            <li class="d-flex gap-3 mb-3 pb-3 border-bottom">
-              <span class="badge bg-primary rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">A</span>
-              <div>
-                <h6 class="fw-bold mb-1">Competitive-Edge to Your Business</h6>
-                <p class="small text-muted mb-0">Technology choices that help teams work smarter and respond faster.</p>
-              </div>
-            </li>
-            <li class="d-flex gap-3 mb-3 pb-3 border-bottom">
-              <span class="badge bg-primary rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">K</span>
-              <div>
-                <h6 class="fw-bold mb-1">Key Solutions for Network & Integration</h6>
-                <p class="small text-muted mb-0">Connecting infrastructure, devices and systems into a coordinated environment.</p>
-              </div>
-            </li>
-            <li class="d-flex gap-3 mb-3 pb-3 border-bottom">
-              <span class="badge bg-primary rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">Y</span>
-              <div>
-                <h6 class="fw-bold mb-1">Your Digital Transformation Partner</h6>
-                <p class="small text-muted mb-0">Helping organizations modernize processes and leverage reliable digital technology.</p>
-              </div>
-            </li>
-            <li class="d-flex gap-3 mb-3 pb-3 border-bottom">
-              <span class="badge bg-primary rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">O</span>
-              <div>
-                <h6 class="fw-bold mb-1">One Stop Solution</h6>
-                <p class="small text-muted mb-0">Comprehensive coverage across planning, deployment, and ongoing support.</p>
-              </div>
-            </li>
-            <li class="d-flex gap-3">
-              <span class="badge bg-primary rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">N</span>
-              <div>
-                <h6 class="fw-bold mb-1">Nurturing Your Business</h6>
-                <p class="small text-muted mb-0">Responsive support and lifecycle care as requirements evolve.</p>
-              </div>
-            </li>
-          </ul>
+
+        <div class="col-lg-4 d-none d-lg-block">
+          <div class="t3d-glass-card text-center p-4">
+            <img src="~/images/brand/takyon-symbol.png" alt="Takyon Logo Symbol" style="max-height: 80px;" class="mb-3" />
+            <h5 class="text-white fw-bold mb-1">Takyon Networks Limited</h5>
+            <p class="small text-info mb-3">BSE-Listed IT Infrastructure Specialist</p>
+            <div class="p-3 rounded text-start small mb-3" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08);">
+              <div class="mb-1 text-white"><strong>HQ:</strong> @Model.Overview.Headquarters</div>
+              <div class="mb-1 text-white"><strong>Offices:</strong> Delhi NCR &bull; Kolkata</div>
+              <div class="text-white"><strong>Empanelments:</strong> @string.Join(", ", Model.Overview.Empanelments.Select(e => e.Name))</div>
+            </div>
+            <a asp-page="/About/Index" class="btn btn-sm btn-outline-light w-100">
+              Read Corporate Story <i class="bi bi-chevron-right ms-1"></i>
+            </a>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- Core 6 IT Solutions Section -->
-<section class="section-padding section-bg-light">
-  <div class="container">
-    <div class="section-heading text-center">
-      <span class="section-tag">Core Offerings</span>
-      <h2 class="section-title">The 6 Core IT Solutions</h2>
-      <div class="accent-bar centered"></div>
-      <p class="section-desc mx-auto">
-        Defined in Takyon's corporate service portfolio, delivering integrated, future-ready infrastructure for institutional resilience.
-      </p>
-    </div>
+  <!-- =========================================================================
+       SCENE 2: ENTERPRISE NETWORKING (10% - 22% Scroll)
+       ========================================================================= -->
+  @if (solNetworking != null)
+  {
+      <section id="scene-networking" class="t3d-scene-section">
+        <div class="container">
+          <div class="row align-items-center justify-content-between g-5">
+            <div class="col-lg-6">
+              <div class="t3d-glass-card">
+                <span class="t3d-scene-badge"><i class="bi bi-diagram-3-fill"></i> Pillar 01 &bull; Core Infrastructure</span>
+                <h2 class="t3d-scene-title display-6">@solNetworking.Title</h2>
+                <div class="t3d-accent-bar"></div>
+                <p class="t3d-scene-lead">@solNetworking.Summary</p>
 
-    <div class="row g-4">
-      @foreach (var solution in Model.CoreSolutions)
-      {
-          <div class="col-md-6 col-lg-4">
-            <div class="takyon-card">
-              <div class="solution-card-body">
-                <div class="solution-icon-wrapper">
-                  <i class="bi @solution.Icon"></i>
-                </div>
-                <span class="solution-badge">Core Solution</span>
-                <h3 class="solution-title">@solution.Title</h3>
-                <p class="small text-muted mb-3">@solution.Summary</p>
-                <div class="border-top pt-3 mt-3">
-                  <h6 class="small fw-bold text-navy mb-2">Key Scopes:</h6>
-                  <ul class="solution-list">
-                    @foreach (var sub in solution.SubServices)
-                    {
-                        <li>@sub</li>
-                    }
-                  </ul>
-                </div>
-              </div>
-              <div class="p-3 bg-light border-top text-end">
-                <a asp-page="/Services/Index" asp-fragment="@solution.Id" class="small fw-bold text-primary text-decoration-none">
-                  View Architecture Details <i class="bi bi-chevron-right"></i>
-                </a>
-              </div>
-            </div>
-          </div>
-      }
-    </div>
+                <h6 class="text-uppercase text-info small fw-bold mb-2">Scope of Services:</h6>
+                <ul class="t3d-pill-list">
+                  @foreach (var sub in solNetworking.SubServices)
+                  {
+                      <li class="t3d-pill-item">@sub</li>
+                  }
+                </ul>
 
-    <div class="text-center mt-5">
-      <a asp-page="/Services/Index" class="btn btn-takyon-primary px-4 py-2">
-        View All Services & Specialized Solutions <i class="bi bi-arrow-right ms-1"></i>
-      </a>
-    </div>
-  </div>
-</section>
+                <h6 class="text-uppercase text-info small fw-bold mb-2">Technical Highlights:</h6>
+                <ul class="t3d-highlights-list">
+                  @foreach (var hl in solNetworking.KeyHighlights)
+                  {
+                      <li><i class="bi bi-check-circle-fill"></i> @hl</li>
+                  }
+                </ul>
 
-<!-- Industry Verticals -->
-<section class="section-padding section-bg-white">
-  <div class="container">
-    <div class="section-heading text-center">
-      <span class="section-tag">Domain Expertise</span>
-      <h2 class="section-title">Industry Verticals We Serve</h2>
-      <div class="accent-bar centered"></div>
-      <p class="section-desc mx-auto">
-        Deep domain experience across 12 sectors, aligning technology with mission-critical organizational objectives.
-      </p>
-    </div>
-
-    <div class="row g-4">
-      @foreach (var ind in Model.FeaturedIndustries)
-      {
-          <div class="col-md-6 col-lg-4">
-            <div class="p-4 rounded-3 border bg-light h-100 transition-all hover-shadow">
-              <div class="d-flex align-items-center gap-3 mb-3">
-                <div class="rounded-circle bg-white p-3 border shadow-sm text-primary fs-3 d-flex align-items-center justify-content-center" style="width: 54px; height: 54px;">
-                  <i class="bi @ind.Icon"></i>
-                </div>
-                <h5 class="fw-bold mb-0 text-navy">@ind.Name</h5>
-              </div>
-              <p class="small text-muted mb-3">@ind.Description</p>
-              <div class="d-flex flex-wrap gap-1">
-                @foreach (var focus in ind.FocusAreas)
+                @if (solNetworking.WhyItMatters.Any())
                 {
-                    <span class="badge bg-white text-secondary border small">@focus</span>
+                    <div class="t3d-impact-box">
+                      <i class="bi bi-lightning-charge-fill"></i>
+                      <strong>Impact:</strong> @solNetworking.WhyItMatters.First()
+                    </div>
                 }
+
+                <div class="mt-4 pt-3 border-top border-secondary-subtle d-flex justify-content-between align-items-center">
+                  <a asp-page="/Services/Index" asp-fragment="@solNetworking.Id" class="btn btn-outline-info btn-sm">
+                    View Complete Specs <i class="bi bi-arrow-right ms-1"></i>
+                  </a>
+                  <span class="small text-muted">A4 Brochure p.4 &bull; Profile p.11</span>
+                </div>
               </div>
             </div>
-          </div>
-      }
-    </div>
 
-    <div class="text-center mt-4">
-      <a asp-page="/Industries/Index" class="btn btn-takyon-outline">
-        View All 12 Industry Verticals <i class="bi bi-arrow-right ms-1"></i>
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- Selected Notable Projects Highlights -->
-<section class="section-padding section-bg-light">
-  <div class="container">
-    <div class="section-heading text-center">
-      <span class="section-tag">Proven Track Record</span>
-      <h2 class="section-title">Selected Notable Projects</h2>
-      <div class="accent-bar centered"></div>
-      <p class="section-desc mx-auto">
-        Verified project execution supported by client scopes and institutional milestones from the A4 brochure.
-      </p>
-    </div>
-
-    <div class="row g-4">
-      @foreach (var proj in Model.FeaturedProjects)
-      {
-          <div class="col-md-6 col-lg-4">
-            <div class="takyon-card">
-              <img src="@proj.ImagePath" alt="@proj.Title" class="project-card-image" />
-              <div class="project-card-body">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                  <span class="project-number">PROJECT @proj.ProjectNumber</span>
-                  <span class="badge bg-info-subtle text-primary-emphasis small">@proj.Industry</span>
-                </div>
-                <h4 class="h5 fw-bold mb-2">@proj.Title</h4>
-                <div class="project-client-badge mb-2">
-                  <i class="bi bi-building me-1"></i> @proj.Client
-                </div>
-                <p class="project-scope mb-0">
-                  <strong>Scope:</strong> @proj.Scope
+            <div class="col-lg-5 d-none d-lg-block text-end">
+              <div class="t3d-glass-card t3d-glass-card-compact d-inline-block text-start" style="max-width: 360px;">
+                <h6 class="text-white fw-bold mb-2"><i class="bi bi-buildings text-info me-2"></i>Campus Riser Architecture</h6>
+                <p class="small text-muted mb-3">
+                  Multi-tier structured fiber distribution engineered for 10GbE / 40GbE backbones across institutional facilities.
                 </p>
+                <div class="d-flex align-items-center gap-2 text-success small fw-semibold">
+                  <i class="bi bi-broadcast"></i> High Availability &bull; Zero Lag
+                </div>
               </div>
             </div>
           </div>
-      }
-    </div>
+        </div>
+      </section>
+  }
 
-    <div class="text-center mt-5">
-      <a asp-page="/Projects/Index" class="btn btn-takyon-primary px-4 py-2">
-        Explore All Case Studies & Projects <i class="bi bi-arrow-right ms-1"></i>
-      </a>
-    </div>
-  </div>
-</section>
+  <!-- =========================================================================
+       SCENE 3: CYBER SECURITY (22% - 34% Scroll)
+       ========================================================================= -->
+  @if (solSecurity != null)
+  {
+      <section id="scene-security" class="t3d-scene-section">
+        <div class="container">
+          <div class="row align-items-center justify-content-between g-5">
+            <div class="col-lg-5 d-none d-lg-block">
+              <div class="t3d-glass-card t3d-glass-card-compact" style="max-width: 360px;">
+                <h6 class="text-white fw-bold mb-2"><i class="bi bi-shield-shaded text-success me-2"></i>Geodesic Threat Deflection</h6>
+                <p class="small text-muted mb-3">
+                  Simulating active perimeter isolation: incoming malicious packets deflect and are cleansed into verified traffic streams.
+                </p>
+                <div class="badge bg-success-subtle text-success border border-success small p-2">
+                  <i class="bi bi-check-all me-1"></i> Zero-Trust Compliant
+                </div>
+              </div>
+            </div>
 
-<!-- Technology Partners Preview -->
-<section class="section-padding section-bg-white border-top">
-  <div class="container">
-    <div class="section-heading text-center">
-      <span class="section-tag">Technology Ecosystem</span>
-      <h2 class="section-title">Trusted Global OEM Alliances</h2>
-      <div class="accent-bar centered"></div>
-      <p class="section-desc mx-auto">
-        Collaborating with 40+ leading OEMs to architect best-of-breed enterprise IT solutions with direct manufacturer support.
-      </p>
-    </div>
+            <div class="col-lg-6">
+              <div class="t3d-glass-card">
+                <span class="t3d-scene-badge badge-green"><i class="bi bi-shield-lock-fill"></i> Pillar 02 &bull; Cyber Defense</span>
+                <h2 class="t3d-scene-title display-6">@solSecurity.Title</h2>
+                <div class="t3d-accent-bar"></div>
+                <p class="t3d-scene-lead">@solSecurity.Summary</p>
 
-    <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3">
-      @foreach (var partner in Model.FeaturedPartners)
-      {
-          <div class="col">
-            <div class="logo-card">
-              <img src="@partner.LogoPath" alt="@partner.AltText" class="logo-img" />
+                <h6 class="text-uppercase text-info small fw-bold mb-2">Defense Layers:</h6>
+                <ul class="t3d-pill-list">
+                  @foreach (var sub in solSecurity.SubServices)
+                  {
+                      <li class="t3d-pill-item">@sub</li>
+                  }
+                </ul>
+
+                <h6 class="text-uppercase text-info small fw-bold mb-2">Security Controls:</h6>
+                <ul class="t3d-highlights-list">
+                  @foreach (var hl in solSecurity.KeyHighlights)
+                  {
+                      <li><i class="bi bi-shield-check"></i> @hl</li>
+                  }
+                </ul>
+
+                @if (solSecurity.WhyItMatters.Any())
+                {
+                    <div class="t3d-impact-box">
+                      <i class="bi bi-lock-fill"></i>
+                      <strong>Compliance:</strong> @solSecurity.WhyItMatters.First()
+                    </div>
+                }
+
+                <div class="mt-4 pt-3 border-top border-secondary-subtle d-flex justify-content-between align-items-center">
+                  <a asp-page="/Services/Index" asp-fragment="@solSecurity.Id" class="btn btn-outline-success btn-sm">
+                    View Cyber Security Suite <i class="bi bi-arrow-right ms-1"></i>
+                  </a>
+                  <span class="small text-muted">A4 Brochure p.4 &bull; Profile p.13</span>
+                </div>
+              </div>
             </div>
           </div>
-      }
-    </div>
+        </div>
+      </section>
+  }
 
-    <div class="text-center mt-4">
-      <a asp-page="/Partners/Index" class="btn btn-takyon-outline">
-        View All OEM Alliances <i class="bi bi-arrow-right ms-1"></i>
-      </a>
-    </div>
-  </div>
-</section>
+  <!-- =========================================================================
+       SCENE 4: DATA CENTER SOLUTIONS (34% - 46% Scroll)
+       ========================================================================= -->
+  @if (solDataCenter != null)
+  {
+      <section id="scene-datacenter" class="t3d-scene-section">
+        <div class="container">
+          <div class="row align-items-center justify-content-center g-5">
+            <div class="col-lg-8">
+              <div class="t3d-glass-card">
+                <span class="t3d-scene-badge"><i class="bi bi-server"></i> Pillar 03 &bull; Mission-Critical Compute</span>
+                <h2 class="t3d-scene-title display-6">@solDataCenter.Title</h2>
+                <div class="t3d-accent-bar"></div>
+                <p class="t3d-scene-lead">@solDataCenter.Summary</p>
 
-<!-- CTA Banner -->
-<section class="container my-5">
-  <div class="cta-banner text-center p-5 rounded-4 shadow">
-    <h2 class="display-6 fw-bold mb-3 text-white">Ready to Modernize Your Digital Infrastructure?</h2>
-    <p class="lead mb-4 text-light opacity-90 mx-auto" style="max-width: 680px;">
-      Connect with our engineering specialists in Lucknow, Delhi, and Kolkata to evaluate your requirements and architect future-ready IT infrastructure.
-    </p>
-    <a asp-page="/Contact/Index" class="btn btn-takyon-green px-4 py-3 fw-bold fs-5">
-      Get in Touch with Takyon <i class="bi bi-arrow-right ms-1"></i>
-    </a>
-  </div>
-</section>
+                <div class="row g-4 mb-3">
+                  <div class="col-md-6">
+                    <h6 class="text-uppercase text-info small fw-bold mb-2">Turnkey DC Scope:</h6>
+                    <ul class="t3d-pill-list">
+                      @foreach (var sub in solDataCenter.SubServices)
+                      {
+                          <li class="t3d-pill-item">@sub</li>
+                      }
+                    </ul>
+                  </div>
+                  <div class="col-md-6">
+                    <h6 class="text-uppercase text-info small fw-bold mb-2">Engineering Standards:</h6>
+                    <ul class="t3d-highlights-list">
+                      @foreach (var hl in solDataCenter.KeyHighlights)
+                      {
+                          <li><i class="bi bi-check-circle-fill"></i> @hl</li>
+                      }
+                    </ul>
+                  </div>
+                </div>
+
+                @if (solDataCenter.WhyItMatters.Any())
+                {
+                    <div class="t3d-impact-box">
+                      <i class="bi bi-cpu-fill"></i>
+                      <strong>Operational Resilience:</strong> @solDataCenter.WhyItMatters.First()
+                    </div>
+                }
+
+                <div class="mt-4 pt-3 border-top border-secondary-subtle d-flex justify-content-between align-items-center">
+                  <a asp-page="/Services/Index" asp-fragment="@solDataCenter.Id" class="btn btn-outline-info btn-sm">
+                    Explore DC Infrastructure <i class="bi bi-arrow-right ms-1"></i>
+                  </a>
+                  <span class="small text-muted">A4 Brochure p.4 &bull; Profile p.15</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+  }
+
+  <!-- =========================================================================
+       SCENE 5: SECURITY & SURVEILLANCE (46% - 58% Scroll)
+       ========================================================================= -->
+  @if (solSurveillance != null)
+  {
+      <section id="scene-surveillance" class="t3d-scene-section">
+        <div class="container">
+          <div class="row align-items-center justify-content-between g-5">
+            <div class="col-lg-6">
+              <div class="t3d-glass-card">
+                <span class="t3d-scene-badge badge-green"><i class="bi bi-camera-video-fill"></i> Pillar 04 &bull; Physical Security & AI</span>
+                <h2 class="t3d-scene-title display-6">@solSurveillance.Title</h2>
+                <div class="t3d-accent-bar"></div>
+                <p class="t3d-scene-lead">@solSurveillance.Summary</p>
+
+                <h6 class="text-uppercase text-info small fw-bold mb-2">Deployment Domains:</h6>
+                <ul class="t3d-pill-list">
+                  @foreach (var sub in solSurveillance.SubServices)
+                  {
+                      <li class="t3d-pill-item">@sub</li>
+                  }
+                </ul>
+
+                <h6 class="text-uppercase text-info small fw-bold mb-2">Integrated Capabilities:</h6>
+                <ul class="t3d-highlights-list">
+                  @foreach (var hl in solSurveillance.KeyHighlights)
+                  {
+                      <li><i class="bi bi-eye-fill"></i> @hl</li>
+                  }
+                </ul>
+
+                @if (solSurveillance.WhyItMatters.Any())
+                {
+                    <div class="t3d-impact-box">
+                      <i class="bi bi-radar"></i>
+                      <strong>Campus Safety:</strong> @solSurveillance.WhyItMatters.First()
+                    </div>
+                }
+
+                <div class="mt-4 pt-3 border-top border-secondary-subtle d-flex justify-content-between align-items-center">
+                  <a asp-page="/Services/Index" asp-fragment="@solSurveillance.Id" class="btn btn-outline-success btn-sm">
+                    View Surveillance Architectures <i class="bi bi-arrow-right ms-1"></i>
+                  </a>
+                  <span class="small text-muted">A4 Brochure p.4 &bull; Profile p.17</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-5 d-none d-lg-block text-end">
+              <div class="t3d-glass-card t3d-glass-card-compact d-inline-block text-start" style="max-width: 360px;">
+                <h6 class="text-white fw-bold mb-2"><i class="bi bi-radar text-success me-2"></i>360° Volumetric Perimeter</h6>
+                <p class="small text-muted mb-3">
+                  Coordinated PTZ coverage matrices with automated command-center alarms and forensic audit logging.
+                </p>
+                <div class="small text-info fw-semibold">
+                  <i class="bi bi-shield-check"></i> Command & Control Ready
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+  }
+
+  <!-- =========================================================================
+       SCENE 6: CLOUD & MANAGED SERVICES (58% - 70% Scroll)
+       ========================================================================= -->
+  @if (solCloud != null)
+  {
+      <section id="scene-cloud" class="t3d-scene-section">
+        <div class="container">
+          <div class="row align-items-center justify-content-between g-5">
+            <div class="col-lg-5 d-none d-lg-block">
+              <div class="t3d-glass-card t3d-glass-card-compact" style="max-width: 360px;">
+                <h6 class="text-white fw-bold mb-2"><i class="bi bi-cloud-arrow-up text-info me-2"></i>24/7 SLA Management</h6>
+                <p class="small text-muted mb-3">
+                  Seamless hybrid migration and multi-year AMC governance ensuring 99.9% uptime for institutional databases.
+                </p>
+                <div class="small text-success fw-semibold">
+                  <i class="bi bi-clock-history"></i> Continuous Proactive Monitoring
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6">
+              <div class="t3d-glass-card">
+                <span class="t3d-scene-badge"><i class="bi bi-cloud-check-fill"></i> Pillar 05 &bull; Cloud & 24/7 Managed</span>
+                <h2 class="t3d-scene-title display-6">@solCloud.Title</h2>
+                <div class="t3d-accent-bar"></div>
+                <p class="t3d-scene-lead">@solCloud.Summary</p>
+
+                <h6 class="text-uppercase text-info small fw-bold mb-2">Cloud Ecosystem:</h6>
+                <ul class="t3d-pill-list">
+                  @foreach (var sub in solCloud.SubServices)
+                  {
+                      <li class="t3d-pill-item">@sub</li>
+                  }
+                </ul>
+
+                <h6 class="text-uppercase text-info small fw-bold mb-2">Service Highlights:</h6>
+                <ul class="t3d-highlights-list">
+                  @foreach (var hl in solCloud.KeyHighlights)
+                  {
+                      <li><i class="bi bi-check-circle-fill"></i> @hl</li>
+                  }
+                </ul>
+
+                @if (solCloud.WhyItMatters.Any())
+                {
+                    <div class="t3d-impact-box">
+                      <i class="bi bi-arrow-repeat"></i>
+                      <strong>Continuity:</strong> @solCloud.WhyItMatters.First()
+                    </div>
+                }
+
+                <div class="mt-4 pt-3 border-top border-secondary-subtle d-flex justify-content-between align-items-center">
+                  <a asp-page="/Services/Index" asp-fragment="@solCloud.Id" class="btn btn-outline-info btn-sm">
+                    Explore Cloud Services <i class="bi bi-arrow-right ms-1"></i>
+                  </a>
+                  <span class="small text-muted">A4 Brochure p.4 &bull; Profile p.18</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+  }
+
+  <!-- =========================================================================
+       SCENE 7: AV & COLLABORATION SERVICES (70% - 80% Scroll)
+       ========================================================================= -->
+  @if (solCollab != null)
+  {
+      <section id="scene-collaboration" class="t3d-scene-section">
+        <div class="container">
+          <div class="row align-items-center justify-content-center g-5">
+            <div class="col-lg-7">
+              <div class="t3d-glass-card">
+                <span class="t3d-scene-badge badge-green"><i class="bi bi-display-fill"></i> Pillar 06 &bull; Unified Communications</span>
+                <h2 class="t3d-scene-title display-6">@solCollab.Title</h2>
+                <div class="t3d-accent-bar"></div>
+                <p class="t3d-scene-lead">@solCollab.Summary</p>
+
+                <div class="row g-4 mb-3">
+                  <div class="col-md-6">
+                    <h6 class="text-uppercase text-info small fw-bold mb-2">Collaboration Scopes:</h6>
+                    <ul class="t3d-pill-list">
+                      @foreach (var sub in solCollab.SubServices)
+                      {
+                          <li class="t3d-pill-item">@sub</li>
+                      }
+                    </ul>
+                  </div>
+                  <div class="col-md-6">
+                    <h6 class="text-uppercase text-info small fw-bold mb-2">Technical Delivery:</h6>
+                    <ul class="t3d-highlights-list">
+                      @foreach (var hl in solCollab.KeyHighlights)
+                      {
+                          <li><i class="bi bi-check-circle-fill"></i> @hl</li>
+                      }
+                    </ul>
+                  </div>
+                </div>
+
+                @if (solCollab.WhyItMatters.Any())
+                {
+                    <div class="t3d-impact-box">
+                      <i class="bi bi-people-fill"></i>
+                      <strong>Productivity:</strong> @solCollab.WhyItMatters.First()
+                    </div>
+                }
+
+                <div class="mt-4 pt-3 border-top border-secondary-subtle d-flex justify-content-between align-items-center">
+                  <a asp-page="/Services/Index" asp-fragment="@solCollab.Id" class="btn btn-outline-success btn-sm">
+                    View Smart Class & AV Solutions <i class="bi bi-arrow-right ms-1"></i>
+                  </a>
+                  <span class="small text-muted">A4 Brochure p.4 &bull; Profile p.16</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+  }
+
+  <!-- =========================================================================
+       SCENE 8: PAN-INDIA FOOTPRINT, PROJECTS & SECTORS (80% - 90% Scroll)
+       ========================================================================= -->
+  <section id="scene-trust" class="t3d-scene-section">
+    <div class="container">
+      <div class="text-center mb-5">
+        <span class="t3d-scene-badge"><i class="bi bi-geo-alt-fill"></i> Proven Track Record</span>
+        <h2 class="t3d-scene-title display-6">Pan-India Footprint & Institutional Trust</h2>
+        <div class="t3d-accent-bar centered"></div>
+        <p class="t3d-scene-lead mx-auto" style="max-width: 720px;">
+          Serving Central & State Governments, Defence, Healthcare, Railways, and Public Utilities across nationwide deployments.
+        </p>
+      </div>
+
+      <!-- Verified Stat Counters Grid -->
+      <div class="row g-3 justify-content-center mb-5">
+        <div class="col-6 col-md-3">
+          <div class="t3d-stat-box">
+            <div class="t3d-stat-val">15+</div>
+            <div class="t3d-stat-lbl">Years of Excellence</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="t3d-stat-box">
+            <div class="t3d-stat-val">1,000+</div>
+            <div class="t3d-stat-lbl">Projects Delivered</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="t3d-stat-box">
+            <div class="t3d-stat-val">40+</div>
+            <div class="t3d-stat-lbl">Global OEM Partners</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="t3d-stat-box">
+            <div class="t3d-stat-val">150+</div>
+            <div class="t3d-stat-lbl">IT Professionals</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notable Projects Preview (Top 3 Case Studies) -->
+      <div class="row g-4 mb-5">
+        @foreach (var proj in Model.FeaturedProjects.Take(3))
+        {
+            <div class="col-md-4">
+              <div class="t3d-project-card">
+                <img src="@proj.ImagePath" alt="@proj.Title" />
+                <div class="t3d-project-card-body">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="badge bg-primary-subtle text-primary small">PROJ @proj.ProjectNumber</span>
+                    <span class="small text-muted">@proj.Industry</span>
+                  </div>
+                  <h6 class="text-white fw-bold mb-1">@proj.Title</h6>
+                  <p class="small text-info mb-2"><i class="bi bi-building me-1"></i> @proj.Client</p>
+                  <p class="small text-muted mb-0" style="font-size: 0.8rem; line-height: 1.4;">
+                    <strong>Scope:</strong> @proj.Scope
+                  </p>
+                </div>
+              </div>
+            </div>
+        }
+      </div>
+
+      <!-- OEM Partner Strip -->
+      <div class="t3d-glass-card text-center p-4">
+        <h6 class="text-uppercase text-muted small fw-bold mb-3">Trusted OEM Alliances Across India</h6>
+        <div class="row row-cols-3 row-cols-sm-4 row-cols-md-6 g-3 justify-content-center align-items-center">
+          @foreach (var partner in Model.FeaturedPartners.Take(6))
+          {
+              <div class="col">
+                <div class="t3d-partner-pill">
+                  <img src="@partner.LogoPath" alt="@partner.AltText" class="t3d-partner-img" />
+                </div>
+              </div>
+          }
+        </div>
+        <div class="mt-3">
+          <a asp-page="/Partners/Index" class="small text-info text-decoration-none">
+            View All 40+ OEM Partnerships <i class="bi bi-chevron-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       SCENE 9: FINAL B2B CONVERSION HUB (90% - 100% Scroll)
+       ========================================================================= -->
+  <section id="scene-cta" class="t3d-scene-section cta-scene">
+    <div class="container">
+      <div class="t3d-glass-card p-5 text-center shadow-lg mx-auto" style="max-width: 920px;">
+        <span class="t3d-scene-badge badge-green"><i class="bi bi-check2-circle"></i> Complete Systems Integration</span>
+        <h2 class="display-5 fw-bold text-white mb-3">Ready to Modernize Your Infrastructure?</h2>
+        <div class="t3d-accent-bar centered mb-4"></div>
+        <p class="t3d-scene-lead mb-4 mx-auto" style="max-width: 680px;">
+          Engage directly with our technical solution architects for RFP feasibility, tender planning, GeM direct procurement, or multi-campus integration.
+        </p>
+
+        <div class="d-flex flex-wrap justify-content-center gap-3 mb-5">
+          <a asp-page="/Contact/Index" class="btn btn-takyon-green px-5 py-3 fw-bold fs-5 shadow">
+            Request Technical Consultation <i class="bi bi-arrow-right ms-1"></i>
+          </a>
+          <a asp-page="/Services/Index" class="btn btn-outline-light px-4 py-3 fw-bold">
+            Explore All 8 Services
+          </a>
+        </div>
+
+        <div class="row g-4 pt-4 border-top border-secondary-subtle text-start">
+          <div class="col-md-4">
+            <h6 class="text-white fw-bold mb-1"><i class="bi bi-geo-alt-fill text-primary me-1"></i> Corporate Headquarters</h6>
+            <p class="small text-muted mb-0">
+              @Model.Overview.Headquarters<br />
+              <strong class="text-light">Phone:</strong> (0522) 665 6617
+            </p>
+          </div>
+          <div class="col-md-4">
+            <h6 class="text-white fw-bold mb-1"><i class="bi bi-building text-info me-1"></i> Regional Presence</h6>
+            <p class="small text-muted mb-0">
+              Delhi NCR Regional Office &bull; Kolkata Eastern Branch<br />
+              <strong class="text-light">Procurement:</strong> @Model.Overview.GemStatus
+            </p>
+          </div>
+          <div class="col-md-4">
+            <h6 class="text-white fw-bold mb-1"><i class="bi bi-shield-check text-success me-1"></i> Corporate Governance</h6>
+            <p class="small text-muted mb-0">
+              @Model.Overview.BseStatus &bull; @Model.Overview.CmmiStatus<br />
+              <strong class="text-light">Inquiries:</strong> info@takyon.co.in
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+@section Scripts {
+  <!-- Local Three.js r128 -->
+  <script src="~/lib/three/three.min.js"></script>
+  <!-- Local GSAP & ScrollTrigger -->
+  <script src="~/lib/gsap/gsap.min.js"></script>
+  <script src="~/lib/gsap/ScrollTrigger.min.js"></script>
+  <!-- Takyon 3D Journey Engine -->
+  <script src="~/js/takyon-3d-journey.js" asp-append-version="true"></script>
+}

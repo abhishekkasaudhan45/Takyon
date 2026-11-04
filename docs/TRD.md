@@ -9,23 +9,27 @@ The initial phase focuses on the frontend using ASP.NET Core Razor Pages, C#, Bo
 
 The architecture must allow future backend integration without requiring a complete rewrite of the UI.
 
-## 2. Technology Stack
+## 2. Technology Stack & Deployment Architecture
 
-| Technology | Purpose |
-|---|---|
-| C# | Application and page logic |
-| ASP.NET Core Razor Pages | Server-rendered frontend |
-| Bootstrap 5 | Responsive layout and UI components |
-| HTML5 | Semantic page structure |
-| CSS3 | Branding and custom styling |
-| JavaScript | Client-side interactions and validation |
-| Strongly typed ViewModels | Data passed to Razor views |
-| Mock content providers | Initial data source |
-| EF Core | Future database integration |
-| ASP.NET Core Identity | Future admin authentication |
-| SQL database | Future persistent storage |
+- **Framework:** ASP.NET Core Razor Pages on .NET 10 (`net10.0`).
+- **Application Topology:** Single-domain monolithic application. Public Razor Pages (`.cshtml`) and their PageModels (`.cshtml.cs`) live in the same root project (`Takyon`). Frontend presentation and backend logic are part of the same application and deployment unit.
+- **Data Architecture:** Strongly typed ViewModels and centralized content provider (`ITakyonContentProvider` / `MockTakyonContentProvider`) registered via ASP.NET Core Dependency Injection.
+- **Styling & Client:** Bootstrap 5.3, custom CSS tokens (Takyon design system), semantic HTML5, and vanilla JavaScript (client-side form validation).
 
-EF Core, Identity, and database connectivity are not part of the initial implementation.
+| Technology | Purpose | Implementation Status |
+|---|---|---|
+| C# 14 / .NET 10 | Application, PageModel orchestration, and domain models | Implemented & verified |
+| ASP.NET Core Razor Pages | Server-rendered frontend pages and partials | Implemented & verified |
+| Bootstrap 5.3 | Responsive grid layout and UI controls | Implemented & verified |
+| HTML5 & CSS3 | Semantic markup and brand tokens | Implemented & verified |
+| Vanilla JavaScript | Client-side validation and interactive states | Implemented & verified |
+| Strongly typed ViewModels | Data contracts passed to Razor views (`Models/ViewModels/`) | Implemented & verified |
+| Mock content provider | Centralized mock content provider (`Content/Mock/`) | Implemented & verified |
+| EF Core | Future database integration replacing mock provider | Deferred (Future Phase 5) |
+| ASP.NET Core Identity | Future admin authentication and access control | Deferred (Future Phase 6) |
+| SQL Database | Future persistent storage | Deferred (Future Phase 5) |
+
+EF Core, Identity, and database connectivity are explicitly not part of the initial implementation.
 
 ## 3. Architecture Overview
 
@@ -137,6 +141,12 @@ Takyon/
 │   │   └── forms.js
 │   │
 │   ├── images/
+│   │   ├── brand/
+│   │   ├── leadership/
+│   │   ├── projects/
+│   │   ├── clients/
+│   │   ├── partners/
+│   │   └── badges/
 │   └── lib/
 │
 ├── Tests/
@@ -189,118 +199,130 @@ Responsible for:
 - Maintaining consistent visual patterns.
 - Reducing duplicated Razor markup.
 
-## 6. Proposed ViewModels
+## 6. ViewModels (Presentation Contracts)
 
-Create strongly typed ViewModels where needed.
+Strongly typed ViewModels reside in `Models/ViewModels/`. They define the presentation contract passed from PageModels to Razor views.
+
+### SolutionItemViewModel (also referenced as SolutionViewModel)
+
+Represents each of the 8 service categories defined in the 29-page company profile.
+
+```csharp
+namespace Takyon.Models.ViewModels;
+
+public class SolutionItemViewModel
+{
+    public string Id { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
+    public string Category { get; set; } = string.Empty; // "Core IT Solution" or "Specialized Service"
+    public bool IsFeatured { get; set; }                 // Approved requirement: true for the 6 core brochure solutions
+    public string Summary { get; set; } = string.Empty;
+    public string Icon { get; set; } = string.Empty;
+    public List<string> SubServices { get; set; } = new();
+    public List<string> KeyHighlights { get; set; } = new();
+    public List<string> WhyItMatters { get; set; } = new();
+    public int DisplayOrder { get; set; }
+}
+```
+
+*Implementation Alignment Note:* In the current codebase (`Models/ViewModels/SolutionItemViewModel.cs`), this property is implemented as `IsCoreBrochureSolution`, which flags `true` for the 6 core brochure solutions. To satisfy the approved architectural requirement, the property contract is documented as `IsFeatured`. The model supports all 8 service categories from the profile, and the data identifies exactly 6 featured categories (`IsFeatured = true`).
 
 ### CompanyOverviewViewModel
-
-Potential properties:
-- CompanyName.
-- Introduction.
-- Mission.
-- Vision.
-- Values.
-- ApprovedProofPoints.
+Represents corporate identity, milestones, core values, empanelments, and narrative:
+- `CompanyName`, `Tagline`, `FoundedYear`, `Headquarters`, `BseStatus`, `CmmiStatus`, `GemStatus`, `Mission`, `Vision`
+- `CoreValues` (`List<ValueItem>`)
+- `Milestones` (`List<CompanyMilestone>`)
+- `Empanelments` (`List<EmpanelmentItem>`)
+- `OverviewParagraphs` (`List<string>`)
 
 ### LeadershipMemberViewModel
+Represents corporate board of directors and executive leadership:
+- `Name`, `Title`, `RoleCategory`, `Bio`, `ImagePath`, `DisplayOrder`
 
-Potential properties:
-- Name.
-- Title.
-- Biography.
-- ImagePath.
-
-### SolutionViewModel
-
-Potential properties:
-- Title.
-- Description.
-- IconPath.
-- DisplayOrder.
-
-### IndustryViewModel
-
-Potential properties:
-- Name.
-- Description.
-- ImagePath.
+### IndustryVerticalViewModel
+Represents industry coverage across public and enterprise sectors:
+- `Id`, `Name`, `Description`, `Icon`, `FocusAreas` (`List<string>`), `DisplayOrder`
 
 ### ProjectCaseStudyViewModel
+Represents verified project deployments from the A4 brochure:
+- `Id`, `ProjectNumber`, `Title`, `Client`, `Location`, `Scope`, `Industry`, `ImagePath`, `IsFeaturedOnHome`, `DisplayOrder`
 
-Potential properties:
-- Title.
-- ClientName.
-- Scope.
-- Industry.
-- ImagePath.
+### ClientLogoViewModel
+Represents institutional and enterprise client credentials:
+- `Name`, `Sector`, `LogoPath`, `AltText`, `Description`
 
-### ClientViewModel
-
-Potential properties:
-- Name.
-- LogoPath.
-- AltText.
-
-### PartnerViewModel
-
-Potential properties:
-- Name.
-- LogoPath.
-- AltText.
+### PartnerLogoViewModel
+Represents global OEM technology alliances:
+- `Name`, `Category`, `LogoPath`, `AltText`, `IsFeatured`
 
 ### OfficeContactViewModel
+Represents verified office directory and editorial transparency:
+- `OfficeType`, `City`, `Address`, `Phone`, `Email`, `IsAddressVerified`, `UnresolvedNote`
 
-Potential properties:
-- OfficeName.
-- Address.
-- Phone.
-- Email.
+### ContactFormViewModel & NewsletterFormViewModel
+Represents client-side validated inquiry inputs:
+- `FullName`, `Email`, `Organization`, `ServiceInterest`, `Message`
+- `Email` (NewsletterFormViewModel)
 
-### ContactFormViewModel
+## 7. Mock Data Strategy & Content Provider Architecture
 
-Potential properties:
-- Name.
-- Email.
-- Organization.
-- Message.
+### Centralized Mock Content Provider
+- All mock business content is centralized in `MockTakyonContentProvider` (`Content/Mock/MockTakyonContentProvider.cs`).
+- Content provider contracts are defined in `Content/Interfaces/ITakyonContentProvider.cs`.
+- Strongly typed ViewModels reside in `Models/ViewModels/`.
+- Dependency injection is configured in `Program.cs` via:
+  ```csharp
+  builder.Services.AddSingleton<ITakyonContentProvider, MockTakyonContentProvider>();
+  ```
+- Razor views receive strongly typed models through PageModels (`Pages/*.cshtml.cs`).
+- Views render data supplied through PageModels and strongly typed ViewModels. Views must not directly access databases, execute SQL, or contain business-data retrieval logic.
+- Shared layouts must not execute database queries or stored procedures.
+- Keep PageModels thin and focused on page orchestration.
+- Centralize mock content rather than duplicating business data across Razor views.
 
-### NewsletterFormViewModel
+### Service Display & Taxonomy Integration
+- The content model and mock content provider support all **8 service categories** represented in the approved 29-page company profile:
+  1. Enterprise Networking
+  2. Cyber Security
+  3. Data Center Solutions
+  4. Cloud Solutions (Cloud & Managed Services)
+  5. Security & Surveillance
+  6. AV & Collaboration Services (AV & Collaboration Solutions)
+  7. SD-WAN & WAN Solutions
+  8. Drone-Enabled Solutions (Drone-Enabled Monitoring)
+- Each service has an `IsFeatured` boolean property.
+- Exactly the **6 core solutions identified in the brochure** are marked `IsFeatured = true`:
+  1. Enterprise Networking
+  2. Cyber Security
+  3. Data Center Solutions
+  4. Cloud Solutions
+  5. Security & Surveillance
+  6. AV & Collaboration Services
+- The remaining 2 profile categories (`SD-WAN & WAN Solutions` and `Drone-Enabled Solutions`) remain available in the complete service catalog (`IsFeatured = false`).
+- The Home page selects and displays the 6 featured solutions using `IsFeatured = true` (via `GetSolutions(coreOnly: true)`).
+- The Services page receives the full eight-category catalog, presenting the 6 core brochure pillars alongside the 2 specialized profile categories.
 
-Potential properties:
-- Email.
-- Consent, if required by the approved form requirements.
+### Source-of-Truth Discrepancy Handling in Mock Data
+Where the 29-page company profile and 8-page A4 brochure disagree, discrepancies are documented next to the affected mock data and exposed via `GetUnresolvedDiscrepancies()`:
+1. **Lucknow HQ Phone:** Company Profile (p.29) lists `(022) 665 6617` (Mumbai 022 STD code typo), whereas Brochure (p.2 & p.8) lists `(0522) 665 6617` (Lucknow 0522 STD code). The correct Lucknow STD code `(0522) 665 6617` is used provisionally in mock data with inline comments, while the discrepancy is preserved and documented for formal confirmation.
+2. **Delhi Office Address:** Company Profile (p.29) lists `911, 9th Floor, DLF Jasola Vihar, New Delhi 110025` while Brochure (p.2 & p.8) lists `307, DLF Tower-B, Jasola District Center, New Delhi 110025`. Because this discrepancy is unresolved, the physical address is withheld from publication with a transparent notice until confirmed by stakeholders.
+3. **Contact QR Payload:** Dynamic QR code generation is withheld until the official payload specification (vCard vs verified company profile URL) is confirmed.
 
-These are proposed presentation models, not a finalized database schema.
+### Future Provider Replacement Strategy
 
-## 7. Mock Data Strategy
-
-### Requirements
-
-- Keep repeatable content in centralized mock providers.
-- Avoid embedding business datasets directly in Razor views.
-- Use typed C# models.
-- Register providers through dependency injection.
-- Keep the initial providers read-only.
-- Use one consistent data source pattern.
-
-Mock content can be stored in C# providers or local JSON files. Select one approach based on the repository's existing conventions.
-
-Do not duplicate the same content in multiple pages.
-
-### Future Replacement Strategy
+The architectural separation allows `MockTakyonContentProvider` to be replaced by a real EF Core-backed provider implementing the same contracts:
 
 Initial:
-
-`Razor Page → ViewModel → Content Provider Interface → Mock Provider`
+`Razor Page → ViewModel → ITakyonContentProvider → MockTakyonContentProvider`
 
 Future:
+`Razor Page → ViewModel → ITakyonContentProvider → EfCoreTakyonContentProvider → ApplicationDbContext → SQL Database`
 
-`Razor Page → ViewModel → Application Service → Database`
-
-The public page should continue to receive the same presentation model wherever practical, even when the underlying data source changes.
-
-Do not design a complicated abstraction layer unless it provides a clear benefit.
+**Compatibility Guarantee and Boundaries:**
+- The target is **zero changes to Razor views when the provider is replaced**, assuming the existing ViewModel contracts remain compatible.
+- PageModels and DI registration in `Program.cs` (`builder.Services.AddScoped<ITakyonContentProvider, EfCoreTakyonContentProvider>();`) will be updated to bind to the persistent data provider.
+- Views will continue to consume the exact same ViewModel types, guaranteeing that presentation markup and layout need zero rewrites.
+- Do not claim that PageModels, service registration, or other application components will require zero changes unless the implementation actually guarantees it.
 
 ## 8. Future Backend Requirements
 

@@ -6,16 +6,16 @@
 - **Project:** Takyon Networks Limited Website
 - **Document:** Product Requirements Document
 - **Status:** Planning baseline
-- **Frontend:** ASP.NET Core Razor Pages, C#, Bootstrap 5
-- **Initial data source:** Static/mock data
-- **Backend:** Deferred to a later phase
+- **Frontend:** ASP.NET Core Razor Pages on .NET 10 (Single-domain monolithic application)
+- **Initial data source:** Static/mock data via centralized provider (`MockTakyonContentProvider`)
+- **Backend:** Deferred to a later phase (EF Core provider replacement architecture)
 
 ### Approved Source Documents
 
-1. `company profile updated(1).pdf`
-2. `TAKYON BROCHURE A4 Size Colour Change(1).pdf`
+1. `company profile updated(1).pdf` (29-page company profile)
+2. `TAKYON BROCHURE A4 Size Colour Change(1).pdf` (8-page A4 brochure)
 
-The updated company profile is the primary reference for branding and company information. The A4 brochure provides supporting project descriptions and company credentials.
+The 29-page company profile is the primary reference for company branding, leadership titles, company information, and contact details. The 8-page A4 brochure is the supporting reference for the six core brochure solutions, documented projects, and brochure-specific credentials or claims. Where documents disagree, discrepancies are explicitly documented and exceptions preserved rather than silently overwritten.
 
 ## 2. Product Overview
 
@@ -69,13 +69,19 @@ These capabilities may be implemented in later phases after requirements are app
 
 ## 6. Source-of-Truth Rules
 
-1. Use the updated company profile for the primary visual identity and company content.
-2. Use the A4 brochure for supplementary project descriptions and credentials.
-3. Do not silently reconcile conflicting facts between the documents.
-4. Do not invent company statistics, leadership biographies, client relationships, certifications, or project outcomes.
-5. Verify office addresses, phone numbers, titles, and other potentially conflicting information before publication.
-6. Use original logo and image assets where available and approved.
-7. Record unsupported or unclear requirements under Open Questions.
+The project enforces an explicit source hierarchy to govern content accuracy, design fidelity, and architectural alignment:
+
+1. **Primary Reference:** The 29-page company profile (`company profile updated(1).pdf`) is the primary reference for company branding, leadership titles, company background, and corporate contact details.
+2. **Supporting Reference:** The 8-page A4 brochure (`TAKYON BROCHURE A4 Size Colour Change(1).pdf`) is the supporting reference for the six core brochure solutions, documented project case studies, and brochure-specific credentials or claims.
+3. **Preserve Discrepancies:** Where the source documents disagree, preserve the discrepancy instead of silently rewriting or guessing the source. All unresolved differences must be explicitly documented and reported for stakeholder review.
+4. **Inline Code Documentation:** Where implementation code or mock data reflects a source discrepancy, add concise inline code comments identifying the source conflict, rationale, and publication status.
+5. **No Invention of Facts:** Do not invent company statistics, leadership biographies, client relationships, certifications, or project outcomes. Unverified facts must not be described as confirmed.
+6. **Specific Contact & Address Discrepancy Rules:**
+   - **Lucknow HQ Phone:** The company profile (p.29) lists `(022) 665 6617`, whereas the brochure (p.2 & p.8) lists `(0522) 665 6617`. The company profile serves as the general source of truth, but this specific exception is documented explicitly: `022` is a Mumbai STD code while `0522` is Lucknow's STD code. In the existing implementation (`MockTakyonContentProvider.cs`), `(0522) 665 6617` is provisionally used as the implementation value with explanatory code comments, while the discrepancy is documented for formal client confirmation.
+   - **Delhi Office Address:** The company profile (p.29) lists `911, 9th Floor, DLF Jasola Vihar, New Delhi 110025`, while the brochure (p.2 & p.8) lists `307, DLF Tower-B, Jasola District Center, New Delhi 110025`. In accordance with strict source-of-truth instructions, this address is not silently reconciled; physical address display is withheld from publication with a transparent notice until confirmed by stakeholders.
+   - **Contact QR Generator:** Dynamic QR code generation is withheld until the official payload specification (vCard vs verified company URL) is confirmed.
+7. **Local Asset Architecture:** All approved images and logos must be stored locally under `wwwroot/images/` organized into six subdirectories (`brand/`, `leadership/`, `projects/`, `clients/`, `partners/`, `badges/`). Remote image hotlinking is strictly prohibited.
+8. **Open Questions:** Record unsupported or unclear requirements under Open Questions.
 
 ## 7. User Roles and Personas
 
@@ -184,11 +190,32 @@ The page must present approved leadership names, titles, portraits, and biograph
 
 Conflicting titles or missing biographies must not be guessed.
 
-### FR-04: Services
+### FR-04: Service Taxonomy & Services Page
 
-The page must present the approved solution categories using consistent reusable cards and descriptions.
+The content model and mock content provider support all **8 service categories** represented in the approved 29-page company profile:
+1. Enterprise Networking
+2. Cyber Security
+3. Data Center Solutions
+4. Cloud Solutions (Cloud & Managed Services)
+5. Security & Surveillance
+6. AV & Collaboration Services (AV & Collaboration Solutions)
+7. SD-WAN & WAN Solutions
+8. Drone-Enabled Solutions (Drone-Enabled Monitoring)
 
-The source documents show more service categories than the requested six. The official six-category taxonomy must be confirmed before finalizing the grouping.
+Service display and taxonomy rules:
+- Each service model has an `IsFeatured` boolean property.
+- Exactly the **6 core solutions identified in the brochure** are marked `IsFeatured = true`:
+  1. Enterprise Networking
+  2. Cyber Security
+  3. Data Center Solutions
+  4. Cloud Solutions
+  5. Security & Surveillance
+  6. AV & Collaboration Services
+- The remaining 2 profile categories (`SD-WAN & WAN Solutions` and `Drone-Enabled Solutions`) remain available in the complete service catalog with `IsFeatured = false`.
+- The Home page displays exactly the 6 featured solutions selected via `IsFeatured = true`.
+- The Services page displays the full catalog of all 8 categories (the 6 core brochure solutions plus the 2 specialized profile categories).
+- Razor views and markup must not duplicate or manually redefine the service catalog; they consume data supplied through PageModels and strongly typed ViewModels from `ITakyonContentProvider`.
+- Do not discard profile content or invent new service categories. Preserves all source terminology and descriptions.
 
 ### FR-05: Industries
 
@@ -267,9 +294,11 @@ As a visitor, I want to learn about company leadership.
 As a visitor, I want to understand the available solution areas.
 
 **Acceptance criteria:**
-- Solution cards have consistent structure.
-- Each card has a title and description.
-- The official solution taxonomy is confirmed before final approval.
+- Solution cards have consistent structure, layout, and typography.
+- Exactly the 6 core featured solutions are displayed on the Home page via `IsFeatured = true`.
+- The Services page displays all 8 profile service categories from the centralized content catalog.
+- Each card displays source-grounded title, summary, sub-services, and technical highlights.
+- Views consume data through PageModels from `ITakyonContentProvider` without duplicated datasets in markup.
 
 ### US-05: Review Projects
 
@@ -313,10 +342,10 @@ As a future developer, I want repeatable content separated from presentation.
 
 | Page | Purpose |
 |---|---|
-| Home | Company introduction and primary navigation |
+| Home | Company introduction, 6 featured solutions, and primary navigation |
 | About Us | Company background, mission, vision, and values |
 | Leadership | Leadership information |
-| Services | Solution categories and descriptions |
+| Services | Complete 8-category solution catalog and descriptions |
 | Industries | Industry coverage |
 | Projects | Notable projects and case studies |
 | Clients | Approved client directory |
@@ -366,13 +395,13 @@ Performance and accessibility audit targets should be agreed before the final pr
 
 ## 14. Open Questions
 
-1. What are the official six top-level solution categories?
+1. **[Resolved — Service Taxonomy]** What are the official solution categories? — **Resolved:** The content model and mock content provider support all 8 service categories from the approved 29-page company profile. Each service model includes an `IsFeatured` boolean property. Exactly the 6 core solutions identified in the brochure are marked `IsFeatured = true` and rendered on the Home page; the Services page renders the complete 8-category catalog (including the two non-featured categories, SD-WAN & WAN Solutions and Drone-Enabled Solutions).
 2. Should Blog, Careers, and Investor Disclosures be public pages in the initial website?
-3. What exact information should the Contact QR generator encode?
-4. Which office addresses and phone numbers are approved for publication?
+3. What exact information should the Contact QR generator encode? (Dynamic generation withheld until URL or vCard payload is confirmed).
+4. **[Resolved — Brochure Discrepancy Rule]** Which office addresses and phone numbers are approved for publication? — **Resolved:** The 29-page company profile is the primary reference, with discrepancies explicitly documented and exceptions preserved. For the Lucknow HQ phone, profile lists `(022) 665 6617` (Mumbai STD code typo) while the brochure lists `(0522) 665 6617` (Lucknow STD code); the implementation provisionally uses `(0522) 665 6617` with documented rationale, marked for client confirmation. For the Delhi office address, profile p.29 (`911, 9th Floor, DLF Jasola Vihar`) conflicts with brochure p.2/8 (`307, DLF Tower-B, Jasola District Center`); the physical address is withheld from publication with a transparent notice pending verification.
 5. Which leadership titles and biographies are current?
-6. Are all client and OEM logos approved for website use?
+6. **[Resolved — Local Asset Storage]** Are all client and OEM logos approved for website use? — **Resolved:** All approved images and logos must be stored locally under `wwwroot/images/` across six structured subdirectories (`brand/`, `leadership/`, `projects/`, `clients/`, `partners/`, `badges/`). Remote image hotlinking is prohibited. All 68 approved assets are verified in the repository.
 7. Should all brochure projects be displayed, or only a selected subset?
 8. What newsletter consent wording and privacy-policy destination should be used?
 9. What is the approved source and publication process for investor disclosures?
-10. What are the target .NET framework, hosting environment, and deployment requirements?
+10. What are the target hosting environment and deployment requirements? (.NET 10.0 ASP.NET Core Razor Pages baseline established).

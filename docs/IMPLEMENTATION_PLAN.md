@@ -36,23 +36,23 @@ These estimates are planning assumptions for a student project. Actual effort de
 
 ## Tasks
 
-- [ ] Read `PRD.md`.
-- [ ] Read `DESIGN.md`.
-- [ ] Read `TRD.md`.
-- [ ] Read `IMPLEMENTATION_PLAN.md`.
-- [ ] Review the updated company profile.
-- [ ] Review the A4 brochure.
-- [ ] Inspect the existing repository.
-- [ ] Inspect the Git working tree before modifying files.
-- [ ] Identify the current .NET SDK and target framework.
-- [ ] Check existing Razor Pages, CSS, JavaScript, and assets.
-- [ ] Confirm the official six solution categories.
-- [ ] Record discrepancies in leadership titles and contact details.
-- [ ] Confirm the QR generator's intended payload.
-- [ ] Confirm the scope of future public pages.
-- [ ] Establish a clean, buildable project baseline.
-- [ ] Verify Bootstrap 5 availability.
-- [ ] Add or update README.md with setup instructions.
+- [x] Read `PRD.md`.
+- [x] Read `DESIGN.md`.
+- [x] Read `TRD.md`.
+- [x] Read `IMPLEMENTATION_PLAN.md`.
+- [x] Review the updated company profile (29-page primary reference).
+- [x] Review the A4 brochure (8-page supporting reference).
+- [x] Inspect the existing repository structure and root.
+- [x] Inspect the Git working tree before modifying files.
+- [x] Identify the current .NET SDK and target framework (.NET 10.0 / ASP.NET Core Razor Pages).
+- [x] Verify local asset storage under `wwwroot/images/` (Verified: 68 total local image and logo assets exist across `brand/`, `leadership/`, `projects/`, `clients/`, `partners/`, and `badges/` with zero remote hotlinking).
+- [x] Confirm the official solution taxonomy (Established: 8 service categories from the 29-page profile, exactly 6 featured solutions from the brochure, with `IsFeatured` controlling Home page selection).
+- [x] Record discrepancies in leadership titles and contact details (Lucknow HQ phone, Delhi office address, contact QR code payload).
+- [ ] Confirm the QR generator's intended payload (Dynamic generation withheld until payload specification is confirmed).
+- [ ] Confirm the scope of future public pages (Blog, Careers, Investor Disclosures).
+- [x] Establish a clean, buildable project baseline (`dotnet build` succeeds with 0 warnings, 0 errors).
+- [x] Verify Bootstrap 5 availability.
+- [x] Add or update README.md with setup instructions.
 
 ## Dependencies
 
@@ -60,12 +60,12 @@ None.
 
 ## Definition of Done
 
-- [ ] The repository structure is understood.
-- [ ] The existing project builds successfully, or baseline failures are documented.
-- [ ] The target framework is confirmed.
-- [ ] The source documents have been reviewed.
-- [ ] Unresolved requirements are documented.
-- [ ] No backend or database code has been introduced.
+- [x] The repository structure is understood.
+- [x] The existing project builds successfully, or baseline failures are documented.
+- [x] The target framework is confirmed (.NET 10.0).
+- [x] The source documents have been reviewed.
+- [x] Unresolved requirements are documented.
+- [x] No backend or database code has been introduced.
 
 # Phase 1 — Design System and Shared Layout
 
@@ -142,7 +142,7 @@ Phase 0.
 - [ ] Build the hero section.
 - [ ] Add the company introduction.
 - [ ] Add approved credibility indicators.
-- [ ] Add solution highlights.
+- [ ] Add solution highlights (rendering exactly 6 core featured solutions selected via `IsFeatured = true`).
 - [ ] Add industry highlights.
 - [ ] Add selected project highlights.
 - [ ] Add partner highlights.
@@ -165,13 +165,14 @@ Phase 0.
 - [ ] Add biographies where available.
 - [ ] Handle missing portraits gracefully.
 
-## Part E: Services
+## Part E: Services and Featured Solutions
 
-- [ ] Build the Services page.
-- [ ] Add the approved solution categories.
-- [ ] Add reusable solution cards.
-- [ ] Add descriptions from the source documents.
-- [ ] Confirm the official taxonomy before finalizing the content.
+- [ ] Render exactly 6 featured solutions on the Home page corresponding to the core brochure solutions.
+- [ ] Render the full catalog of 8 service categories on the Services page (6 core brochure solutions + 2 specialized profile categories).
+- [ ] Use `IsFeatured` on the centralized content model rather than duplicating or hardcoding selection logic in Razor markup.
+- [ ] Preserve all source-grounded service categories, terminology, and descriptions from the 29-page profile and brochure.
+- [ ] Verify that both the Home and Services pages consume data from the same centralized content source (`ITakyonContentProvider`).
+- [ ] Build reusable, accessible solution card components with consistent typography, icons, and layout.
 
 ## Part F: Industries
 

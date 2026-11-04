@@ -46,8 +46,13 @@ routes_to_test = [
     ("/Contact", "Contact Us"),
     # Critical Static Assets
     ("/css/site.css", "--takyon-blue"),
+    ("/css/takyon-3d.css", "takyon-3d-page"),
     ("/js/forms.js", "takyonContactForm"),
     ("/js/site.js", "Takyon Networks Limited"),
+    ("/js/takyon-3d-journey.js", "takyon-3d-canvas"),
+    ("/lib/three/three.min.js", None),
+    ("/lib/gsap/gsap.min.js", None),
+    ("/lib/gsap/ScrollTrigger.min.js", None),
     ("/images/brand/takyon-logo.png", None),
     ("/images/leadership/manish-sharma.jpg", None),
     ("/images/leadership/neeraj-kumar.jpg", None),
