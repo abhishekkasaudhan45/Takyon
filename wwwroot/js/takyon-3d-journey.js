@@ -31,13 +31,12 @@
 
   function enableStaticFallbackMode() {
     document.body.classList.add('takyon-3d-disabled');
-    const toggleBtn = document.getElementById('takyon-3d-toggle');
-    const toggleText = document.getElementById('takyon-3d-toggle-text');
-    if (toggleBtn) {
-      toggleBtn.classList.add('is-off');
-      toggleBtn.setAttribute('aria-pressed', 'false');
+    is3DEnabled = false;
+    isRunning = false;
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
     }
-    if (toggleText) toggleText.textContent = '3D View: OFF';
   }
 
   if (!hasWebGLSupport()) {
@@ -124,7 +123,6 @@
 
     const range = endPoint.p - startPoint.p;
     const factor = range > 0 ? (clamped - startPoint.p) / range : 0;
-    // Smooth step interpolation
     const smooth = factor * factor * (3 - 2 * factor);
 
     const pos = [
@@ -383,7 +381,7 @@
     const core = new THREE.Mesh(coreGeo, coreMat);
     group.add(core);
 
-    // Threat Particles (Streaming in and deflecting)
+    // Threat Particles
     const threatCount = 80;
     const threatGeo = new THREE.BufferGeometry();
     const threatPos = new Float32Array(threatCount * 3);
@@ -396,7 +394,7 @@
       threatPos[i * 3 + 1] = (Math.random() - 0.5) * 10;
       threatPos[i * 3 + 2] = Math.sin(theta) * r;
 
-      threatCols[i * 3] = 1.0;     // Red / Amber
+      threatCols[i * 3] = 1.0;
       threatCols[i * 3 + 1] = 0.2;
       threatCols[i * 3 + 2] = 0.2;
     }
@@ -486,7 +484,7 @@
     const coolPos = new Float32Array(coolingCount * 3);
 
     for (let i = 0; i < coolingCount; i++) {
-      coolPos[i * 3] = (Math.random() - 0.5) * 3.0; // Central aisle
+      coolPos[i * 3] = (Math.random() - 0.5) * 3.0;
       coolPos[i * 3 + 1] = (Math.random() - 0.5) * 6;
       coolPos[i * 3 + 2] = -Math.random() * 65;
     }
@@ -570,7 +568,6 @@
     const group = new THREE.Group();
     group.position.set(0, 14, 0);
 
-    // Central interconnected cloud sphere cluster
     const clusterPositions = [
       [0, 0, 0, 3.5],
       [-3.5, 0.5, 1, 2.5],
@@ -631,7 +628,7 @@
       dynamicObjects.avDisplays.push(screen);
     }
 
-    // Modern boardroom conference table wireframe
+    // Boardroom conference table wireframe
     const tableGeo = new THREE.CylinderGeometry(5.5, 5.5, 0.3, 16);
     const tableMat = new THREE.LineBasicMaterial({
       color: COLORS.blue,
@@ -653,7 +650,6 @@
     const group = new THREE.Group();
     group.position.set(0, 0, 0);
 
-    // Primary regional hubs (Lucknow HQ, Delhi, Kolkata, Mumbai, Bangalore)
     const hubs = [
       { name: 'Lucknow HQ', pos: [0, 2.5, 0], isHQ: true },
       { name: 'Delhi NCR', pos: [-4, 5, 1], isHQ: false },
@@ -676,7 +672,6 @@
       hubPoints.push(new THREE.Vector3(...h.pos));
     });
 
-    // Connecting optical fiber lines to Lucknow HQ
     const hqPos = hubPoints[0];
     for (let i = 1; i < hubPoints.length; i++) {
       const lineGeo = new THREE.BufferGeometry().setFromPoints([hqPos, hubPoints[i]]);
@@ -747,13 +742,13 @@
     } else {
       if (is3DEnabled && !isRunning) {
         isRunning = true;
-        if (clock) clock.getDelta(); // reset delta so no time-skip jump
+        if (clock) clock.getDelta();
         animate();
       }
     }
   }
 
-  // Dispose Scene Resources (Geometries, Materials) on page unload
+  // Dispose Scene Resources on page unload
   function disposeSceneResources() {
     if (!scene) return;
     scene.traverse(function (object) {
@@ -833,39 +828,20 @@
     });
   }
 
-  // 3D View Toggle Control
+  // Accessibility & Motion Preference Handling (No floating button)
   function initToggleControl() {
-    const toggleBtn = document.getElementById('takyon-3d-toggle');
-    if (!toggleBtn) return;
-
-    // Check stored preference or prefers-reduced-motion
-    const storedPref = sessionStorage.getItem('takyon_3d_enabled');
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (storedPref === 'false' || prefersReduced) {
+    if (prefersReduced) {
       set3DState(false);
     } else {
       set3DState(true);
     }
-
-    toggleBtn.addEventListener('click', function () {
-      set3DState(!is3DEnabled);
-    });
   }
 
   function set3DState(enable) {
     is3DEnabled = enable;
-    const toggleBtn = document.getElementById('takyon-3d-toggle');
-    const toggleText = document.getElementById('takyon-3d-toggle-text');
-
     if (is3DEnabled) {
       document.body.classList.remove('takyon-3d-disabled');
-      if (toggleBtn) {
-        toggleBtn.classList.remove('is-off');
-        toggleBtn.setAttribute('aria-pressed', 'true');
-      }
-      if (toggleText) toggleText.textContent = '3D View: ON';
-      sessionStorage.setItem('takyon_3d_enabled', 'true');
       if (!isRunning) {
         isRunning = true;
         if (clock) clock.getDelta();
@@ -873,12 +849,6 @@
       }
     } else {
       document.body.classList.add('takyon-3d-disabled');
-      if (toggleBtn) {
-        toggleBtn.classList.add('is-off');
-        toggleBtn.setAttribute('aria-pressed', 'false');
-      }
-      if (toggleText) toggleText.textContent = '3D View: OFF';
-      sessionStorage.setItem('takyon_3d_enabled', 'false');
       isRunning = false;
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
@@ -944,7 +914,7 @@
           pos[i] *= 0.995;
           pos[i + 2] *= 0.995;
           const dist = Math.sqrt(pos[i] * pos[i] + pos[i + 2] * pos[i + 2]);
-          if (dist < 10) { // Reached shield
+          if (dist < 10) {
             pos[i] = (Math.random() - 0.5) * 35;
             pos[i + 2] = (Math.random() - 0.5) * 35;
           }
